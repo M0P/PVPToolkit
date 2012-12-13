@@ -1,0 +1,11 @@
+modules:
+    pvptag:
+        enabled: true
+        duration: 20
+        blockedcmds:
+            - j
+            - warp
+            - home
+            - fly
+    pvplog:
+        enabled: true
