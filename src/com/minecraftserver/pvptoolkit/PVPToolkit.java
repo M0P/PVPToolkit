@@ -41,8 +41,10 @@ public class PVPToolkit extends JavaPlugin {
     }
 
     private void enableModules() {
+        PluginManager pm = getServer().getPluginManager();
         if (pvpTagEnabled) {
             pvptagger = new PVPTagger(this);
+            pm.registerEvents(pvptagger, this);
         }
 
     }
@@ -58,13 +60,11 @@ public class PVPToolkit extends JavaPlugin {
     @Override
     public void onEnable() {
         PluginDescriptionFile pdfFile = this.getDescription();
-        PluginManager pm = getServer().getPluginManager();
 
         loadConfiguration();
         saveConfiguration();
 
         enableModules();
-        // pm.registerEvents(playerListener, this);
 
         log(name + " - Version " + pdfFile.getVersion() + " is enabled");
 

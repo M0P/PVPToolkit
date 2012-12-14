@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -34,7 +35,10 @@ public class PVPTagger implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
+        String command = event.getMessage().toLowerCase().substring(1, event.getMessage().length());
         if (isTagged(player)) {
+            Bukkit.broadcastMessage(event.getMessage().toLowerCase());
+            Bukkit.broadcastMessage(pvpTagBlockedCmds.toString());
             if (pvpTagBlockedCmds.contains(event.getMessage().toLowerCase())) {
                 player.sendMessage("This command is disabled while in combat");
                 event.setCancelled(true);
@@ -45,24 +49,26 @@ public class PVPTagger implements Listener {
 
     private void startTagging(final Player player) {
         taggedPlayers.put(player.getName(), System.currentTimeMillis());
+        Bukkit.broadcastMessage(player.getName() + " is tagged");
         pvptoolkit.getServer().getScheduler().scheduleSyncDelayedTask(pvptoolkit, new Runnable() {
             @Override
             public void run() {
-                if (stopTagging(player))
-                    player.sendMessage(ChatColor.GOLD + "You are no longer tagged.");
+                stopTagging(player);
             }
-        }, pvpTagDuration * 20);
+        }, (pvpTagDuration + 1) * 20);
     }
 
-    private boolean stopTagging(Player player) {
+    private void stopTagging(Player player) {
         long millis = System.currentTimeMillis();
-        if (taggedPlayers.containsKey(player.getName()))
+        Bukkit.broadcastMessage("Try Stop");
+        if (taggedPlayers.containsKey(player.getName())) {
+            Bukkit.broadcastMessage(millis - taggedPlayers.get(player.getName()).longValue() + "");
             if (millis - taggedPlayers.get(player.getName()).longValue() >= (pvpTagDuration * 1000)) {
                 taggedPlayers.remove(player.getName());
-                return true;
+                Bukkit.broadcastMessage("Stop successfull");
+                player.sendMessage(ChatColor.GOLD + "You are no longer tagged.");
             }
-        return false;
-
+        }
     }
 
     private void resetTagging(Player player) {
