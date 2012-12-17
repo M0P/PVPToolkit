@@ -8,5 +8,11 @@ modules:
             - home
             - fly
             - jumpto
+            - tpa
+            - tpahere
+            - v
     pvplog:
         enabled: false
+    pvpblock:
+        enabled: true
+        allow_attack: true

@@ -36,11 +36,11 @@ public class PVPTagger implements Listener {
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         String command = event.getMessage().toLowerCase().substring(1, event.getMessage().length());
+        stopTagging(player);
         if (isTagged(player)) {
-            Bukkit.broadcastMessage(event.getMessage().toLowerCase());
-            Bukkit.broadcastMessage(pvpTagBlockedCmds.toString());
-            if (pvpTagBlockedCmds.contains(event.getMessage().toLowerCase())) {
-                player.sendMessage("This command is disabled while in combat");
+            if (pvpTagBlockedCmds.contains(command)) {
+                if (command.equalsIgnoreCase("fly") && player.isFlying()) return;
+                player.sendMessage(ChatColor.DARK_RED + "/" + command + " is disabled in combat");
                 event.setCancelled(true);
                 return;
             }
@@ -49,24 +49,14 @@ public class PVPTagger implements Listener {
 
     private void startTagging(final Player player) {
         taggedPlayers.put(player.getName(), System.currentTimeMillis());
-        Bukkit.broadcastMessage(player.getName() + " is tagged");
-        pvptoolkit.getServer().getScheduler().scheduleSyncDelayedTask(pvptoolkit, new Runnable() {
-            @Override
-            public void run() {
-                stopTagging(player);
-            }
-        }, (pvpTagDuration + 1) * 20);
     }
 
     private void stopTagging(Player player) {
         long millis = System.currentTimeMillis();
-        Bukkit.broadcastMessage("Try Stop");
         if (taggedPlayers.containsKey(player.getName())) {
             Bukkit.broadcastMessage(millis - taggedPlayers.get(player.getName()).longValue() + "");
             if (millis - taggedPlayers.get(player.getName()).longValue() >= (pvpTagDuration * 1000)) {
                 taggedPlayers.remove(player.getName());
-                Bukkit.broadcastMessage("Stop successfull");
-                player.sendMessage(ChatColor.GOLD + "You are no longer tagged.");
             }
         }
     }
@@ -99,12 +89,14 @@ public class PVPTagger implements Listener {
             if ((dmgr instanceof Player) && (e.getEntity() instanceof Player)) {
                 Player damager = (Player) dmgr;
                 Player tagged = (Player) e.getEntity();
-                if (isTagged(damager)) {
-                    resetTagging(damager);
-                } else startTagging(damager);
-                if (isTagged(tagged)) {
-                    resetTagging(tagged);
-                } else startTagging(tagged);
+                if (!damager.hasPermission("pvptoolkit.blocker.nottagable"))
+                    if (isTagged(damager)) {
+                        resetTagging(damager);
+                    } else startTagging(damager);
+                if (!tagged.hasPermission("pvptoolkit.blocker.nottagable"))
+                    if (isTagged(tagged)) {
+                        resetTagging(tagged);
+                    } else startTagging(tagged);
             }
         }
 

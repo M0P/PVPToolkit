@@ -16,23 +16,29 @@ public class PVPToolkit extends JavaPlugin {
 
     private int                   pvpTagDuration;
 
+    private boolean               pvpBlockAttackAllowed;
+
     private List<String>          pvpTagBlockedCmds;
 
     private Boolean               pvpTagEnabled;
+    private Boolean               pvpBlockerEnabled;
     private Boolean               pvpLoggerEnabled;
 
     private PVPTagger             pvptagger;
     private PVPLogger             pvplogger;
+    private PVPBlocker            pvpblocker;
 
     public void loadConfiguration() {
         FileConfiguration cfg = this.getConfig();
 
         pvpTagEnabled = cfg.getBoolean("modules.pvptag.enabled");
+        pvpBlockerEnabled = cfg.getBoolean("modules.pvpblock.enabled");
         pvpLoggerEnabled = cfg.getBoolean("modules.pvplog.enabled");
 
         pvpTagDuration = cfg.getInt("modules.pvptag.duration", 20);
-
         pvpTagBlockedCmds = cfg.getStringList("modules.pvptag.blockedcmds");
+
+        pvpBlockAttackAllowed = cfg.getBoolean("modules.pvpblock.allow_attack");
 
     }
 
@@ -46,7 +52,15 @@ public class PVPToolkit extends JavaPlugin {
             pvptagger = new PVPTagger(this);
             pm.registerEvents(pvptagger, this);
         }
+        if (pvpBlockerEnabled) {
+            pvpblocker = new PVPBlocker(this);
+            pm.registerEvents(pvpblocker, this);
+        }
 
+    }
+
+    public boolean isPvpBlockAttackAllowed() {
+        return pvpBlockAttackAllowed;
     }
 
     public int getPvpTagDuration() {

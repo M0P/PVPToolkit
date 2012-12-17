@@ -1,8 +1,20 @@
 name: PVPToolkit
 main: com.minecraftserver.pvptoolkit.PVPToolkit
 website: http://www.minecraftserver.com/
-version: 1.00 Alpha 4
+version: 1.00 Alpha 7
 author: M0P
 commands:
     
 permissions:
+    pvptoolkit.blocker.block:
+        description: blocks pvp of player
+        default: op
+    pvptoolkit.blocker.bypassblock:
+        description: bypasses pvp protections
+        default: op
+    pvptoolkit.tagger.nottagable:
+        description: player cant be tagged
+        default: op
+    pvptoolkit.tagger:
+        description: protection against pvp
+        default: op
