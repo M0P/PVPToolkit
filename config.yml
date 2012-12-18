@@ -14,8 +14,8 @@ modules:
             - tpahere
             - v
     pvplog:
-        enabled: false
-        duration: 60
+        enabled: true
+        duration: 20
     pvpblock:
         enabled: false
         allow_attack: true

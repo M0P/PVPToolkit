@@ -1,7 +1,7 @@
 name: PVPToolkit
 main: com.minecraftserver.pvptoolkit.PVPToolkit
 website: http://www.minecraftserver.com/
-version: 1.10
+version: 1.19
 author: M0P
 commands:
    fly:

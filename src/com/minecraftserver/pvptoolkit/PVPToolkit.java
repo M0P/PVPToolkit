@@ -68,22 +68,27 @@ public class PVPToolkit extends JavaPlugin {
         if (pvpTagEnabled) {
             pvptagger = new PVPTagger(this);
             pm.registerEvents(pvptagger, this);
-            if (pvpBlockerEnabled) {
-                pvpblocker = new PVPBlocker(this);
-                pm.registerEvents(pvpblocker, this);
+            this.getLogger().log(Level.INFO, "PVP Tagger loaded");
+            if (pvpLoggerEnabled) {
+                pvplogger = new PVPLogger(this);
+                pm.registerEvents(pvplogger, this);
+                this.getLogger().log(Level.INFO, "PVP Logger loaded");
             }
         }
         if (pvpBlockerEnabled) {
             pvpblocker = new PVPBlocker(this);
             pm.registerEvents(pvpblocker, this);
+            this.getLogger().log(Level.INFO, "PVP Blocker loaded");
         }
         if (playerTrackerEnabled) {
             playertracker = new PlayerTracker(this);
             pm.registerEvents(playertracker, this);
+            this.getLogger().log(Level.INFO, "Player Tracker loaded");
         }
         if (pvpFlyEnabled) {
             pvpfly = new PVPFly(this);
             pm.registerEvents(pvpfly, this);
+            this.getLogger().log(Level.INFO, "PVP Fly loaded");
         }
 
     }
@@ -109,7 +114,7 @@ public class PVPToolkit extends JavaPlugin {
                 }
                 return false;
             } else {
-                if (args[0].equalsIgnoreCase("fly") && pvpFlyEnabled) {
+                if (cmd.getName().equalsIgnoreCase("fly") && pvpFlyEnabled) {
                     pvpfly.togglefly(sender, args);
                 }
                 return true;
@@ -154,6 +159,7 @@ public class PVPToolkit extends JavaPlugin {
     @Override
     public void onDisable() {
         if (pvpblockerPassword != null) pvpblockerPassword.saveData();
+        if (pvpLoggerEnabled) pvplogger.saveData();
         log(name + " is Disabled");
     }
 

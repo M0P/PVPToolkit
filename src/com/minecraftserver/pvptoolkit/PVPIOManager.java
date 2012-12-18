@@ -86,4 +86,12 @@ public class PVPIOManager {
     public void saveBlockerPassword(String password, List<String> list) {
         saveData(new PVPData(password, list));
     }
+    
+    public void saveLoggerData(List<String>list){
+        saveData(new PVPData(list));
+    }
+    public List<String> loadLoggerData(){
+        PVPData data=loadData();
+        return data.getDeadPlayers();
+    }
 }

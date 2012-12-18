@@ -34,7 +34,7 @@ public class PVPTagger implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        if(event.isCancelled())return;
+        if (event.isCancelled()) return;
         Player player = event.getPlayer();
         boolean notallowed = false;
         String command = event.getMessage().toLowerCase().substring(1, event.getMessage().length());
@@ -46,7 +46,7 @@ public class PVPTagger implements Listener {
                     break;
                 }
             if (notallowed) {
-                if (command.toLowerCase().startsWith("fly") && player.isFlying()) return;
+                if (command.toLowerCase().startsWith("fly") && player.getAllowFlight()) return;
                 player.sendMessage(ChatColor.DARK_RED + "/" + command + " is disabled in combat");
                 event.setCancelled(true);
                 return;
@@ -96,13 +96,16 @@ public class PVPTagger implements Listener {
             if ((dmgr instanceof Player) && (e.getEntity() instanceof Player)) {
                 Player damager = (Player) dmgr;
                 Player tagged = (Player) e.getEntity();
-                if (!damager.hasPermission("pvptoolkit.blocker.nottagable"))
-                    if (isTagged(damager)) {
-                        resetTagging(damager);
-                    } else startTagging(damager);
-                if (!tagged.hasPermission("pvptoolkit.blocker.nottagable")) if (isTagged(tagged)) {
-                    resetTagging(tagged);
-                } else startTagging(tagged);
+                if (!damager.getAllowFlight()) {
+                    if (!damager.hasPermission("pvptoolkit.blocker.nottagable"))
+                        if (isTagged(damager)) {
+                            resetTagging(damager);
+                        } else startTagging(damager);
+                    if (!tagged.hasPermission("pvptoolkit.blocker.nottagable"))
+                        if (isTagged(tagged)) {
+                            resetTagging(tagged);
+                        } else startTagging(tagged);
+                }
             }
         }
 
