@@ -12,6 +12,9 @@ permissions:
     pvptoolkit.blocker.bypassblock:
         description: bypasses pvp protections
         default: op
+    pvptoolkit.blockerpassword.protection:
+        description: enabled password pvp protection
+        default: false        
     pvptoolkit.tagger.nottagable:
         description: player cant be tagged
         default: op

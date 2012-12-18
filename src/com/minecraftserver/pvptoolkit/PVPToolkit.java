@@ -27,6 +27,7 @@ public class PVPToolkit extends JavaPlugin {
     private PVPTagger             pvptagger;
     private PVPLogger             pvplogger;
     private PVPBlocker            pvpblocker;
+    private PVPBlockerPassword    pvpblockerPassword;
 
     public void loadConfiguration() {
         FileConfiguration cfg = this.getConfig();
@@ -86,6 +87,7 @@ public class PVPToolkit extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (pvpblockerPassword != null) pvpblockerPassword.saveData();
         log(name + " is Disabled");
     }
 

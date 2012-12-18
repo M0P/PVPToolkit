@@ -14,5 +14,8 @@ modules:
     pvplog:
         enabled: false
     pvpblock:
-        enabled: true
+        enabled: false
         allow_attack: true
+    pvpblockpassword:
+        enabled: false
+        default_password: strength

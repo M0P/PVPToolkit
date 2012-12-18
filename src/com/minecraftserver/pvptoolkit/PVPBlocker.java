@@ -47,6 +47,5 @@ public class PVPBlocker implements Listener {
 
             }
         }
-
     }
 }

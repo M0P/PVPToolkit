@@ -54,7 +54,6 @@ public class PVPTagger implements Listener {
     private void stopTagging(Player player) {
         long millis = System.currentTimeMillis();
         if (taggedPlayers.containsKey(player.getName())) {
-            Bukkit.broadcastMessage(millis - taggedPlayers.get(player.getName()).longValue() + "");
             if (millis - taggedPlayers.get(player.getName()).longValue() >= (pvpTagDuration * 1000)) {
                 taggedPlayers.remove(player.getName());
             }
