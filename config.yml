@@ -4,8 +4,10 @@ modules:
         duration: 20
         blockedcmds:
             - j
+            - jumpto
             - warp
             - home
+            - spawn
             - fly
             - jumpto
             - tpa
@@ -13,9 +15,15 @@ modules:
             - v
     pvplog:
         enabled: false
+        duration: 60
     pvpblock:
         enabled: false
         allow_attack: true
     pvpblockpassword:
         enabled: false
         default_password: strength
+    playertracker:
+        enabled: true
+        trackdistance: 350
+    pvpfly:
+        enabled: true

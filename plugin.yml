@@ -1,10 +1,20 @@
 name: PVPToolkit
 main: com.minecraftserver.pvptoolkit.PVPToolkit
 website: http://www.minecraftserver.com/
-version: 1.00 Alpha 7
+version: 1.10
 author: M0P
 commands:
-    
+   fly:
+      description: Makes you (or the person specified) fly
+      usage: /<command> [username]
+      permission: pvptoolkit.fly.fly
+      permission-message: You don't have permission to do that!
+   pvp:
+      description: Collection of commands for the different modules
+      usage: /<command> [username]
+      permission: pvptoolkit
+      permission-message: You don't have permission to do that!
+      
 permissions:
     pvptoolkit.blocker.block:
         description: blocks pvp of player
@@ -18,6 +28,24 @@ permissions:
     pvptoolkit.tagger.nottagable:
         description: player cant be tagged
         default: op
-    pvptoolkit.tagger:
-        description: protection against pvp
+    pvptoolkit.logger.notlogable:
+        description: player cant be pvp logged
+        default: op
+    pvptoolkit.playertracker.trackable:
+        description: Allows you to be tracked by others
+        default: op
+    pvptoolkit.playertracker.cantrack:
+        description: Allows you to track other players
+        default: op
+    pvptoolkit.fly.fly:
+        description: Allows you to fly
+        default: op
+    pvptoolkit.fly.other:
+        description: Allows you to make others fly
+        default: op
+    pvptoolkit.fly.damage:
+        description: Allows you to cause damage, place Lava and Fire while flying
+        default: op
+    pvptoolkit.fly.invincible:
+        description: Makes you invincible while flying
         default: op

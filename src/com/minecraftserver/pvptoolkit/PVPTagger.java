@@ -34,12 +34,19 @@ public class PVPTagger implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        if(event.isCancelled())return;
         Player player = event.getPlayer();
+        boolean notallowed = false;
         String command = event.getMessage().toLowerCase().substring(1, event.getMessage().length());
         stopTagging(player);
         if (isTagged(player)) {
-            if (pvpTagBlockedCmds.contains(command)) {
-                if (command.equalsIgnoreCase("fly") && player.isFlying()) return;
+            for (String cmd : pvpTagBlockedCmds)
+                if (command.toLowerCase().startsWith(cmd)) {
+                    notallowed = true;
+                    break;
+                }
+            if (notallowed) {
+                if (command.toLowerCase().startsWith("fly") && player.isFlying()) return;
                 player.sendMessage(ChatColor.DARK_RED + "/" + command + " is disabled in combat");
                 event.setCancelled(true);
                 return;
@@ -69,6 +76,7 @@ public class PVPTagger implements Listener {
     }
 
     public boolean isTagged(Player player) {
+        stopTagging(player);
         if (taggedPlayers.containsKey(player.getName())) return true;
         return false;
 
@@ -92,10 +100,9 @@ public class PVPTagger implements Listener {
                     if (isTagged(damager)) {
                         resetTagging(damager);
                     } else startTagging(damager);
-                if (!tagged.hasPermission("pvptoolkit.blocker.nottagable"))
-                    if (isTagged(tagged)) {
-                        resetTagging(tagged);
-                    } else startTagging(tagged);
+                if (!tagged.hasPermission("pvptoolkit.blocker.nottagable")) if (isTagged(tagged)) {
+                    resetTagging(tagged);
+                } else startTagging(tagged);
             }
         }
 
