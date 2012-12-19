@@ -25,6 +25,7 @@ public class PlayerTracker implements Listener {
 
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
+        Bukkit.broadcastMessage("Tracker enabled:" + enabled);
         if (event.isCancelled() || !enabled) return;
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK)
                 && event.getMaterial() == Material.COMPASS

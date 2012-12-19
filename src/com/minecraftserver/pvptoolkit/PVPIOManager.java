@@ -75,6 +75,7 @@ public class PVPIOManager {
 
     public static YamlConfiguration loadConfig() {
         try {
+            firstRun();
             config.load(configFile);
             return config;
         } catch (Exception e) {
@@ -91,32 +92,6 @@ public class PVPIOManager {
             e.printStackTrace();
         }
     }
-
-    public static YamlConfiguration loadYamls() {
-        File dir = getDir();
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        File configFile = new File(dir + File.separator + "config.yml");
-        try {
-            Bukkit.broadcastMessage("Start loading config");
-            // config = plugin.getConfig();
-            Bukkit.broadcastMessage("finished loading config");
-            return config;
-        } catch (Exception e) {
-            Bukkit.broadcastMessage("Error Loading file");
-            if (!configFile.exists()) try {
-                configFile.createNewFile();
-                plugin.saveDefaultConfig();
-                Bukkit.broadcastMessage("re-create file");
-            } catch (IOException e1) {
-                e1.printStackTrace();
-                return null;
-            }
-            return loadYamls();
-        }
-    }
-
     private static PVPData loadData() {
         File dir = getDir();
         if (!dir.exists()) {

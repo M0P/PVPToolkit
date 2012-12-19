@@ -12,6 +12,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,28 +48,19 @@ public class PVPToolkit extends JavaPlugin {
     private PluginManager         pm;
 
     public void loadConfiguration() {
-        Bukkit.broadcastMessage("try to load config");
         YamlConfiguration cfg = PVPIOManager.loadConfig();
-        Bukkit.broadcastMessage("done try to load config");
         if (cfg == null) {
-            Bukkit.broadcastMessage("done try to load config");
             PVPIOManager.firstRun();
             cfg = PVPIOManager.loadConfig();
             this.getLogger().log(Level.WARNING,
                     "PVPToolkit: Config could not be loaded, using default config");
         }
-        Bukkit.broadcastMessage(cfg.toString());
 
         pvpTagEnabled = cfg.getBoolean("modules.pvptag.enabled");
         // pvpBlockerEnabled = cfg.getBoolean("modules.pvpblock.enabled");
         pvpLoggerEnabled = cfg.getBoolean("modules.pvplog.enabled");
         playerTrackerEnabled = cfg.getBoolean("modules.playertracker.enabled");
         pvpFlyEnabled = cfg.getBoolean("modules.pvpfly.enabled");
-
-        Bukkit.broadcastMessage("Tagger:" + pvpTagEnabled);
-        Bukkit.broadcastMessage("Logger:" + pvpLoggerEnabled);
-        Bukkit.broadcastMessage("Fly:" + pvpFlyEnabled);
-        Bukkit.broadcastMessage("Track:" + playerTrackerEnabled);
 
         if (pvpTagEnabled) {
             pvpTagDuration = cfg.getInt("modules.pvptag.duration", 20);
@@ -81,32 +75,47 @@ public class PVPToolkit extends JavaPlugin {
     }
 
     private void enableModules() {
-        PluginManager pm = getServer().getPluginManager();
-        if (pvpTagEnabled && pvptagger != null) {
-            pvptagger = new PVPTagger(this);
+        pm = getServer().getPluginManager();
+        if (pvpTagEnabled) {
+            if (pvptagger == null) pvptagger = new PVPTagger(this);
             pm.registerEvents(pvptagger, this);
             this.getLogger().log(Level.INFO, "PVP Tagger loaded");
-            if (pvpLoggerEnabled && pvplogger != null) {
-                pvplogger = new PVPLogger(this);
+
+            if (pvpLoggerEnabled) {
+                if (pvplogger == null) pvplogger = new PVPLogger(this);
                 pm.registerEvents(pvplogger, this);
                 this.getLogger().log(Level.INFO, "PVP Logger loaded");
-            } else if (pvplogger != null) pvplogger.disable();
-        } else if (pvptagger != null) pvptagger.disable();
+
+            } else if (pvplogger != null) {
+                pvplogger.disable();
+                pvplogger = null;
+            }
+        } else if (pvptagger != null) {
+            pvptagger.disable();
+            pvptagger = null;
+        }
+
         // if (pvpBlockerEnabled) {
         // pvpblocker = new PVPBlocker(this);
         // pm.registerEvents(pvpblocker, this);
         // this.getLogger().log(Level.INFO, "PVP Blocker loaded");
         // }
-        if (playerTrackerEnabled && playertracker != null) {
-            playertracker = new PlayerTracker(this);
+        if (playerTrackerEnabled) {
+            if (playertracker == null) playertracker = new PlayerTracker(this);
             pm.registerEvents(playertracker, this);
             this.getLogger().log(Level.INFO, "Player Tracker loaded");
-        } else if (playertracker != null) playertracker.disable();
-        if (pvpFlyEnabled && pvpfly != null) {
-            pvpfly = new PVPFly(this);
+        } else if (playertracker != null) {
+            playertracker.disable();
+            playertracker = null;
+        }
+        if (pvpFlyEnabled) {
+            if (pvpfly == null) pvpfly = new PVPFly(this);
             pm.registerEvents(pvpfly, this);
             this.getLogger().log(Level.INFO, "PVP Fly loaded");
-        } else if (pvpfly != null) pvpfly.disable();
+        } else if (pvpfly != null) {
+            pvpfly.disable();
+            pvpfly = null;
+        }
 
     }
 
@@ -138,6 +147,8 @@ public class PVPToolkit extends JavaPlugin {
                                 + ChatColor.RED + "not tagged");
                     } else if (args[0].equalsIgnoreCase("reload")
                             && player.hasPermission("pvptoolkit.admin")) {
+                        PlayerInteractEvent.getHandlerList().unregister(this);
+                        HandlerList.unregisterAll(this);
                         onDisable();
                         onEnable();
                     } else if (args[0].equalsIgnoreCase("version")) {
@@ -199,12 +210,8 @@ public class PVPToolkit extends JavaPlugin {
     public void onEnable() {
         PluginDescriptionFile pdfFile = this.getDescription();
         PVPIOManager.init(this);
-        Bukkit.broadcastMessage("Before load");
         loadConfiguration();
-        Bukkit.broadcastMessage("After load");
-        Bukkit.broadcastMessage("Before enable modules");
         enableModules();
-        Bukkit.broadcastMessage("After enable modules");
 
         log(name + " - Version " + pdfFile.getVersion() + " is enabled");
 
