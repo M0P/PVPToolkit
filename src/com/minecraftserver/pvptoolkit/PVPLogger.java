@@ -29,10 +29,12 @@ public class PVPLogger implements Listener {
     List<Player>          offlinePlayers  = new Vector<>();
     List<String>          deadplayers;
 
-    public final String MODULVERSION = "1.0";
+    public final String   MODULVERSION    = "1.0";
+    private boolean       enabled;
 
     public PVPLogger(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
+        enabled = true;
         pvpTagger = pvptoolkit.getPvptagger();
         datamanager = new PVPIOManager();
         datamanager.init(pvptoolkit);
@@ -77,7 +79,7 @@ public class PVPLogger implements Listener {
 
     @EventHandler
     public void PlayerLogOut(PlayerQuitEvent event) {
-        if (pvpTagger.isTagged(event.getPlayer())
+        if (enabled && pvpTagger.isTagged(event.getPlayer())
                 && !event.getPlayer().hasPermission("pvptoolkit.logger.notlogable")
                 && !event.getPlayer().isOp()
                 && !event.getPlayer().hasPermission("pvptoolkit.admin")) {
@@ -88,7 +90,7 @@ public class PVPLogger implements Listener {
 
     @EventHandler
     public void PlayerLogIn(PlayerJoinEvent event) {
-        if (loggedPlayers.containsKey(event.getPlayer().getName())) {
+        if (enabled && loggedPlayers.containsKey(event.getPlayer().getName())) {
             markedtoremoval.add(event.getPlayer().getName());
             for (Player player : offlinePlayers)
                 if (player.getName().equals(event.getPlayer().getName())) {
@@ -96,7 +98,7 @@ public class PVPLogger implements Listener {
                     break;
                 }
         }
-        if (deadplayers.contains(event.getPlayer().getName())) {
+        if (enabled && deadplayers.contains(event.getPlayer().getName())) {
             event.getPlayer().getInventory().clear();
             event.getPlayer().setHealth(0);
             deadplayers.remove(event.getPlayer().getName());
@@ -105,6 +107,12 @@ public class PVPLogger implements Listener {
 
     public void saveData() {
         datamanager.saveLoggerData(deadplayers);
+    }
+
+    public void disable() {
+        enabled = false;
+        pvptoolkit.getServer().getScheduler().cancelTask(runningTask);
+
     }
 
 }

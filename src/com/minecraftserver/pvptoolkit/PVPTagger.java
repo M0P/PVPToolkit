@@ -27,17 +27,18 @@ public class PVPTagger implements Listener {
 
     private List<String>          pvpTagBlockedCmds;
     public final String           MODULVERSION  = "1.0";
+    private boolean enabled;
 
     public PVPTagger(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
         pvpTagDuration = pvptoolkit.getPvpTagDuration();
         pvpTagBlockedCmds = pvptoolkit.getPvpTagBlockedCmds();
-
+        enabled=true;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled()||!enabled) return;
         Player player = event.getPlayer();
         boolean notallowed = false;
         String command = event.getMessage().toLowerCase().substring(1, event.getMessage().length());
@@ -101,7 +102,7 @@ public class PVPTagger implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
-        if (event.isCancelled() || (event.getDamage() == 0)) {
+        if (event.isCancelled() || (event.getDamage() == 0)||!enabled) {
             return;
         }
         if (event instanceof EntityDamageByEntityEvent) {
@@ -127,5 +128,9 @@ public class PVPTagger implements Listener {
             }
         }
 
+    }
+
+    public void disable() {
+        enabled=false;
     }
 }

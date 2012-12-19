@@ -20,16 +20,20 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 
 public class PVPFly implements Listener {
-    private PVPToolkit   pvptoolkit;
+    private PVPToolkit  pvptoolkit;
 
     public final String MODULVERSION = "1.1";
 
+    private boolean     enabled;
+
     public PVPFly(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
+        enabled = true;
     }
 
     public void togglefly(CommandSender sender, String[] args) {
-        if ((sender instanceof Player)) {
+        Bukkit.broadcastMessage("Fly command." + enabled);
+        if ((sender instanceof Player) && enabled) {
             Player player = (Player) sender;
             if (args.length == 0) {
                 if (player.hasPermission("pvptoolkit.fly.fly")
@@ -76,7 +80,7 @@ public class PVPFly implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || !enabled) return;
         if ((event.getBucket().compareTo(Material.LAVA_BUCKET) == 0)) {
             Player player = (Player) event.getPlayer();
             if ((player.getAllowFlight()) && (!player.hasPermission("pvptoolkit.fly.damage"))
@@ -90,7 +94,7 @@ public class PVPFly implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockIgnite(BlockIgniteEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || !enabled) return;
         if ((event.getCause().compareTo(IgniteCause.FLINT_AND_STEEL) == 0)) {
             Player player = (Player) event.getPlayer();
             if ((player.getAllowFlight()) && (!player.hasPermission("pvptoolkit.fly.damage"))
@@ -105,7 +109,7 @@ public class PVPFly implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onHit(EntityDamageByEntityEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || !enabled) return;
         if ((event.getDamager() instanceof Player) && !(event.getEntity() instanceof Monster)) {
             Player damager = (Player) event.getDamager();
             if ((damager.getAllowFlight()) && (!damager.hasPermission("pvptoolkit.fly.damage"))
@@ -119,7 +123,7 @@ public class PVPFly implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onDamage(EntityDamageEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || !enabled) return;
         if ((event.getEntity() instanceof Player)) {
             Player receiver = (Player) event.getEntity();
             if ((receiver.getAllowFlight())
@@ -130,7 +134,7 @@ public class PVPFly implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onShoot(EntityShootBowEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || !enabled) return;
         if ((event.getEntity() instanceof Player)) {
             Player archer = (Player) event.getEntity();
             if ((archer.getAllowFlight()) && (!archer.hasPermission("fly.damage"))
@@ -143,7 +147,7 @@ public class PVPFly implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerFish(PlayerFishEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || !enabled) return;
         if ((event.getCaught() instanceof Player)) {
             Player damager = (Player) event.getPlayer();
             if ((damager.getAllowFlight()) && (!damager.hasPermission("fly.damage"))
@@ -152,5 +156,10 @@ public class PVPFly implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    public void disable() {
+        Bukkit.broadcastMessage("Disable Fly module");
+        enabled = false;
     }
 }

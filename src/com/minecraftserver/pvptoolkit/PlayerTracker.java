@@ -11,19 +11,21 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerTracker implements Listener {
-    private PVPToolkit pvptoolkit;
+    private PVPToolkit  pvptoolkit;
 
-    private int        trackingdistance;
+    private int         trackingdistance;
     public final String MODULVERSION = "1.1";
+    private boolean     enabled;
 
     public PlayerTracker(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
         this.trackingdistance = pvptoolkit.getTrackingdistance();
+        enabled = true;
     }
 
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || !enabled) return;
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK)
                 && event.getMaterial() == Material.COMPASS
                 && event.getPlayer().hasPermission("pvptoolkit.playertracker.cantrack")
@@ -37,8 +39,9 @@ public class PlayerTracker implements Listener {
             Location targetLoc = null;
             double finaldistance = Double.MAX_VALUE, distance = 0;
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (!p.isOp() && p.hasPermission("pvptoolkit.playertracker.trackable") &&!p.hasPermission("pvptoolkit.admin")
-                        && p != event.getPlayer() && p.getWorld() == event.getPlayer().getWorld()) {
+                if (!p.isOp() && p.hasPermission("pvptoolkit.playertracker.trackable")
+                        && !p.hasPermission("pvptoolkit.admin") && p != event.getPlayer()
+                        && p.getWorld() == event.getPlayer().getWorld()) {
                     distance = playerLoc.distance(p.getLocation());
                     if (distance < finaldistance) {
                         finaldistance = distance;
@@ -54,5 +57,9 @@ public class PlayerTracker implements Listener {
             } else event.getPlayer().sendMessage(ChatColor.BLUE + "There is no player near you!");
 
         }
+    }
+
+    public void disable() {
+        enabled = false;
     }
 }

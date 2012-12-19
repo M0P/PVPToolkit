@@ -5,14 +5,17 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.permissions.BroadcastPermissions;
 
 public class PVPToolkit extends JavaPlugin {
     protected final static Logger logger = Logger.getLogger("Minecraft");
@@ -39,15 +42,31 @@ public class PVPToolkit extends JavaPlugin {
     private PVPFly                pvpfly;
 
     private PlayerTracker         playertracker;
+    private PluginManager         pm;
 
     public void loadConfiguration() {
-        FileConfiguration cfg = PVPIOManager.loadYamls();
+        Bukkit.broadcastMessage("try to load config");
+        YamlConfiguration cfg = PVPIOManager.loadConfig();
+        Bukkit.broadcastMessage("done try to load config");
+        if (cfg == null) {
+            Bukkit.broadcastMessage("done try to load config");
+            PVPIOManager.firstRun();
+            cfg = PVPIOManager.loadConfig();
+            this.getLogger().log(Level.WARNING,
+                    "PVPToolkit: Config could not be loaded, using default config");
+        }
+        Bukkit.broadcastMessage(cfg.toString());
 
         pvpTagEnabled = cfg.getBoolean("modules.pvptag.enabled");
         // pvpBlockerEnabled = cfg.getBoolean("modules.pvpblock.enabled");
         pvpLoggerEnabled = cfg.getBoolean("modules.pvplog.enabled");
         playerTrackerEnabled = cfg.getBoolean("modules.playertracker.enabled");
         pvpFlyEnabled = cfg.getBoolean("modules.pvpfly.enabled");
+
+        Bukkit.broadcastMessage("Tagger:" + pvpTagEnabled);
+        Bukkit.broadcastMessage("Logger:" + pvpLoggerEnabled);
+        Bukkit.broadcastMessage("Fly:" + pvpFlyEnabled);
+        Bukkit.broadcastMessage("Track:" + playerTrackerEnabled);
 
         if (pvpTagEnabled) {
             pvpTagDuration = cfg.getInt("modules.pvptag.duration", 20);
@@ -61,37 +80,33 @@ public class PVPToolkit extends JavaPlugin {
             trackingdistance = cfg.getInt("modules.playertracker.trackdistance", 350);
     }
 
-    public void saveConfiguration() {
-        this.saveConfig();
-    }
-
     private void enableModules() {
         PluginManager pm = getServer().getPluginManager();
-        if (pvpTagEnabled) {
+        if (pvpTagEnabled && pvptagger != null) {
             pvptagger = new PVPTagger(this);
             pm.registerEvents(pvptagger, this);
             this.getLogger().log(Level.INFO, "PVP Tagger loaded");
-            if (pvpLoggerEnabled) {
+            if (pvpLoggerEnabled && pvplogger != null) {
                 pvplogger = new PVPLogger(this);
                 pm.registerEvents(pvplogger, this);
                 this.getLogger().log(Level.INFO, "PVP Logger loaded");
-            }
-        }
+            } else if (pvplogger != null) pvplogger.disable();
+        } else if (pvptagger != null) pvptagger.disable();
         // if (pvpBlockerEnabled) {
         // pvpblocker = new PVPBlocker(this);
         // pm.registerEvents(pvpblocker, this);
         // this.getLogger().log(Level.INFO, "PVP Blocker loaded");
         // }
-        if (playerTrackerEnabled) {
+        if (playerTrackerEnabled && playertracker != null) {
             playertracker = new PlayerTracker(this);
             pm.registerEvents(playertracker, this);
             this.getLogger().log(Level.INFO, "Player Tracker loaded");
-        }
-        if (pvpFlyEnabled) {
+        } else if (playertracker != null) playertracker.disable();
+        if (pvpFlyEnabled && pvpfly != null) {
             pvpfly = new PVPFly(this);
             pm.registerEvents(pvpfly, this);
             this.getLogger().log(Level.INFO, "PVP Fly loaded");
-        }
+        } else if (pvpfly != null) pvpfly.disable();
 
     }
 
@@ -132,16 +147,16 @@ public class PVPToolkit extends JavaPlugin {
                                 + ChatColor.GOLD + "AquaXV" + ChatColor.BLUE
                                 + " for helping and testing alot.");
                         if (pvpFlyEnabled)
-                            player.sendMessage(ChatColor.BLUE + "Fly modul version: "
+                            player.sendMessage(ChatColor.BLUE + "Fly module version: "
                                     + ChatColor.GOLD + pvpfly.MODULVERSION);
                         if (pvpLoggerEnabled)
-                            player.sendMessage(ChatColor.BLUE + "PVPlogger modul version: "
+                            player.sendMessage(ChatColor.BLUE + "PVPlogger module version: "
                                     + ChatColor.GOLD + pvplogger.MODULVERSION);
                         if (pvpTagEnabled)
-                            player.sendMessage(ChatColor.BLUE + "PVPtagger modul version: "
+                            player.sendMessage(ChatColor.BLUE + "PVPtagger module version: "
                                     + ChatColor.GOLD + pvptagger.MODULVERSION);
                         if (playerTrackerEnabled)
-                            player.sendMessage(ChatColor.BLUE + "Playertracker modul version: "
+                            player.sendMessage(ChatColor.BLUE + "Playertracker module version: "
                                     + ChatColor.GOLD + playertracker.MODULVERSION);
                     }
                 }
@@ -184,11 +199,12 @@ public class PVPToolkit extends JavaPlugin {
     public void onEnable() {
         PluginDescriptionFile pdfFile = this.getDescription();
         PVPIOManager.init(this);
-        
+        Bukkit.broadcastMessage("Before load");
         loadConfiguration();
-        saveConfiguration();
-
+        Bukkit.broadcastMessage("After load");
+        Bukkit.broadcastMessage("Before enable modules");
         enableModules();
+        Bukkit.broadcastMessage("After enable modules");
 
         log(name + " - Version " + pdfFile.getVersion() + " is enabled");
 
@@ -199,6 +215,7 @@ public class PVPToolkit extends JavaPlugin {
         // if (pvpblockerPassword != null) pvpblockerPassword.saveData();
         if (pvpLoggerEnabled) pvplogger.saveData();
         log(name + " is Disabled");
+
     }
 
     public static void log(String txt) {
