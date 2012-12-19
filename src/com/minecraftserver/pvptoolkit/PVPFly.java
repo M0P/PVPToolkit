@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerFishEvent;
 public class PVPFly implements Listener {
     private PVPToolkit   pvptoolkit;
 
-    private final String MODULVERSION = "0.3";
+    private final String MODULVERSION = "0.4";
 
     public PVPFly(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
@@ -32,7 +32,7 @@ public class PVPFly implements Listener {
         if ((sender instanceof Player)) {
             Player player = (Player) sender;
             if (args.length == 0) {
-                if (player.hasPermission("fly.fly")) if (player.getAllowFlight()) {
+                if (player.hasPermission("pvptoolkit.fly.fly")) if (player.getAllowFlight()) {
                     player.setFlying(false);
                     player.setAllowFlight(false);
                     player.sendMessage(ChatColor.GREEN + "Disabled fly mode!");
@@ -46,15 +46,12 @@ public class PVPFly implements Listener {
                     player.sendMessage(ChatColor.RED
                             + "PVP, Flint and Steel and placing of Lava is turned off while flying.");
                     player.sendMessage(ChatColor.GREEN + "/fly - Toggles your fly mode!");
-                    if (player.hasPermission("fly.speed"))
-                        player.sendMessage(ChatColor.GREEN
-                                + "/fly <player> - Toggles fly mode for <player>");
                     player.sendMessage(ChatColor.BLACK + "/fly version - Don't try it, its evil!");
                 } else if (args[0].equals("version")) {
                     player.sendMessage("version " + MODULVERSION);
                     player.sendMessage("author: stolen and improved by " + ChatColor.GOLD + "M0P"
                             + ChatColor.RESET + ChatColor.BLACK + " (original by jorisk322)");
-                } else if (player.hasPermission("fly.other")) {
+                } else if (player.hasPermission("pvptoolkit.fly.other")) {
                     Player otherplayer = Bukkit.getPlayer(args[0]);
                     if (otherplayer != null) {
                         if (otherplayer.getAllowFlight()) {

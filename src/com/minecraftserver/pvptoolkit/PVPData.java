@@ -33,6 +33,13 @@ public class PVPData implements Serializable {
         this.joinedPlayers = null;
     }
 
+    public PVPData() {
+        this.password = null;
+        this.blockedPlayers = null;
+        this.deadPlayers = null;
+        this.joinedPlayers = null;
+    }
+
     public String getPassword() {
         return password;
     }

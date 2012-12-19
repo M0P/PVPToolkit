@@ -12,6 +12,7 @@ modules:
             - jumpto
             - tpa
             - tpahere
+            - back
             - v
     pvplog:
         enabled: true

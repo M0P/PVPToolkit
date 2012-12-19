@@ -52,7 +52,7 @@ public class PVPIOManager {
         File ownerFile = new File(dir + File.separator + "data.bin");
         try {
             if (!ownerFile.exists()) {
-                ownerFile.createNewFile();
+                saveData(new PVPData());
                 return null;
             }
             FileInputStream fis = new FileInputStream(ownerFile);
@@ -86,12 +86,14 @@ public class PVPIOManager {
     public void saveBlockerPassword(String password, List<String> list) {
         saveData(new PVPData(password, list));
     }
-    
-    public void saveLoggerData(List<String>list){
+
+    public void saveLoggerData(List<String> list) {
         saveData(new PVPData(list));
     }
-    public List<String> loadLoggerData(){
-        PVPData data=loadData();
-        return data.getDeadPlayers();
+
+    public List<String> loadLoggerData() {
+        PVPData data = loadData();
+        if (data != null) return data.getDeadPlayers();
+        return null;
     }
 }

@@ -23,9 +23,10 @@ public class PVPLogger implements Listener {
     PVPToolkit            pvptoolkit;
     PVPTagger             pvpTagger;
     PVPIOManager          datamanager;
-    HashMap<String, Long> loggedPlayers  = new HashMap<>(); ;
+    List<String>          markedtoremoval = new Vector<>();
+    HashMap<String, Long> loggedPlayers   = new HashMap<>(); ;
     private int           runningTask;
-    List<Player>          offlinePlayers = new Vector<>();
+    List<Player>          offlinePlayers  = new Vector<>();
     List<String>          deadplayers;
 
     public PVPLogger(PVPToolkit toolkit) {
@@ -58,11 +59,12 @@ public class PVPLogger implements Listener {
                                     Bukkit.broadcastMessage("Loaded Player data, clearing inv");
                                     Inventory inv = deadplayer.getInventory();
                                     for (ItemStack is : inv) {
-                                        deadplayer.getWorld().dropItemNaturally(
-                                                deadplayer.getLocation(), is);
+                                        if (is != null)
+                                            deadplayer.getWorld().dropItemNaturally(
+                                                    deadplayer.getLocation(), is);
                                     }
                                     Bukkit.broadcastMessage("cleared inv, kill him");
-                                    loggedPlayers.remove(key);
+                                    markedtoremoval.add(key);
                                     offlinePlayers.remove(deadplayer);
                                     deadplayers.add(deadplayer.getName());
                                     Bukkit.broadcastMessage("all done");
@@ -70,6 +72,9 @@ public class PVPLogger implements Listener {
                                         .broadcastMessage("Player not found, something went wrong");// TODO
                             }
                         }
+                        for (String s : markedtoremoval)
+                            loggedPlayers.remove(s);
+                        markedtoremoval.clear();
                     }
                 }, 60L, 100L);
         pvptoolkit.getLogger().log(Level.INFO, "PVP Logger really loaded, cycle started...");
@@ -91,14 +96,17 @@ public class PVPLogger implements Listener {
     @EventHandler
     public void PlayerLogIn(PlayerJoinEvent event) {
         if (loggedPlayers.containsKey(event.getPlayer().getName())) {
-            loggedPlayers.remove(event.getPlayer().getName());
+            markedtoremoval.add(event.getPlayer().getName());
             for (Player player : offlinePlayers)
-                if (player.getName().equals(event.getPlayer().getName()))
+                if (player.getName().equals(event.getPlayer().getName())) {
                     offlinePlayers.remove(player);
+                    break;
+                }
         }
         if (deadplayers.contains(event.getPlayer().getName())) {
             event.getPlayer().getInventory().clear();
             event.getPlayer().setHealth(0);
+            deadplayers.remove(event.getPlayer().getName());
         }
     }
 
