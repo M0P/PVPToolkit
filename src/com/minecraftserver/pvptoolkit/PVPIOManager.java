@@ -58,7 +58,7 @@ public class PVPIOManager {
         } catch (Exception e) {
             if (!configFile.exists()) try {
                 configFile.createNewFile();
-                plugin.getConfig().save(configFile);
+                plugin.saveDefaultConfig();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 return null;
