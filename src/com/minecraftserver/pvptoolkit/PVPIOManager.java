@@ -16,9 +16,11 @@ import java.util.Vector;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class PVPIOManager {
-    static private PVPToolkit plugin;
+    static private PVPToolkit        plugin;
+    static private YamlConfiguration config = new YamlConfiguration();
 
     public static void init(PVPToolkit parent) {
         plugin = parent;
@@ -41,6 +43,27 @@ public class PVPIOManager {
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static YamlConfiguration loadYamls() {
+        File dir = getDir();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File configFile = new File(dir + File.separator + "config.yml");
+        try {
+            config.load(configFile);
+            return config;
+        } catch (Exception e) {
+            if (!configFile.exists()) try {
+                configFile.createNewFile();
+                plugin.getConfig().save(configFile);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                return null;
+            }
+            return loadYamls();
         }
     }
 

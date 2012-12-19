@@ -92,9 +92,9 @@ public class PVPTagger implements Listener {
         while (iterator.hasNext()) {
             Map.Entry pairs = (Map.Entry) iterator.next();
             String key = (String) pairs.getKey();
-            if (stopTagging(key))
-                pvptoolkit.getServer().getPlayer(key)
-                        .sendMessage(ChatColor.GOLD + "You are no longer tagged");
+            Player player = pvptoolkit.getServer().getPlayer(key);
+            if (stopTagging(key) && player != null)
+                player.sendMessage(ChatColor.GOLD + "You are no longer tagged");
         }
 
     }

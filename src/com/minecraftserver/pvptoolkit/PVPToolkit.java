@@ -1,5 +1,6 @@
 package com.minecraftserver.pvptoolkit;
 
+import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ public class PVPToolkit extends JavaPlugin {
     private PlayerTracker         playertracker;
 
     public void loadConfiguration() {
-        FileConfiguration cfg = this.getConfig();
+        FileConfiguration cfg = PVPIOManager.loadYamls();
 
         pvpTagEnabled = cfg.getBoolean("modules.pvptag.enabled");
         // pvpBlockerEnabled = cfg.getBoolean("modules.pvpblock.enabled");
@@ -182,7 +183,8 @@ public class PVPToolkit extends JavaPlugin {
     @Override
     public void onEnable() {
         PluginDescriptionFile pdfFile = this.getDescription();
-
+        PVPIOManager.init(this);
+        
         loadConfiguration();
         saveConfiguration();
 
