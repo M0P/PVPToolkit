@@ -29,6 +29,8 @@ public class PVPLogger implements Listener {
     List<Player>          offlinePlayers  = new Vector<>();
     List<String>          deadplayers;
 
+    public final String MODULVERSION = "1.0";
+
     public PVPLogger(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
         pvpTagger = pvptoolkit.getPvptagger();
@@ -44,50 +46,41 @@ public class PVPLogger implements Listener {
                         Iterator iterator = loggedPlayers.entrySet().iterator();
                         while (iterator.hasNext()) {
                             Map.Entry pairs = (Map.Entry) iterator.next();
-                            Bukkit.broadcastMessage(pairs.getKey() + "=" + pairs.getValue());
                             String key = (String) pairs.getKey();
                             Long val = (Long) pairs.getValue();
-                            Bukkit.broadcastMessage("Found " + key + " as pvp logged player");
                             int logduration = pvptoolkit.getPvpLogDuration();
-                            Bukkit.broadcastMessage("Deathtime:" + val + " || current time:"
-                                    + currentmillis + " || difference:" + (currentmillis - val));
                             if (currentmillis >= (val + logduration * 1000)) {
                                 Player deadplayer = null;
                                 for (Player player : offlinePlayers)
                                     if (player.getName().equals(key)) deadplayer = player;
                                 if (deadplayer != null) {
-                                    Bukkit.broadcastMessage("Loaded Player data, clearing inv");
                                     Inventory inv = deadplayer.getInventory();
                                     for (ItemStack is : inv) {
                                         if (is != null)
                                             deadplayer.getWorld().dropItemNaturally(
                                                     deadplayer.getLocation(), is);
                                     }
-                                    Bukkit.broadcastMessage("cleared inv, kill him");
                                     markedtoremoval.add(key);
                                     offlinePlayers.remove(deadplayer);
                                     deadplayers.add(deadplayer.getName());
-                                    Bukkit.broadcastMessage("all done");
-                                } else Bukkit
-                                        .broadcastMessage("Player not found, something went wrong");// TODO
+                                } else pvptoolkit.getLogger().log(Level.WARNING,
+                                        "PVP Logger: Couldnt find Playerdata of logged player");
                             }
                         }
                         for (String s : markedtoremoval)
                             loggedPlayers.remove(s);
                         markedtoremoval.clear();
+                        pvpTagger.checkTaggedPlayers();
                     }
-                }, 60L, 100L);
-        pvptoolkit.getLogger().log(Level.INFO, "PVP Logger really loaded, cycle started...");
+                }, 60L, 20L);
     }
 
     @EventHandler
     public void PlayerLogOut(PlayerQuitEvent event) {
-        Bukkit.broadcastMessage(event.getPlayer().getName() + " logged out and is tagged? :"
-                + pvpTagger.isTagged(event.getPlayer()));
         if (pvpTagger.isTagged(event.getPlayer())
                 && !event.getPlayer().hasPermission("pvptoolkit.logger.notlogable")
-                && !event.getPlayer().isOp()) {
-            Bukkit.broadcastMessage(event.getPlayer().getName() + " logged out while tagged");
+                && !event.getPlayer().isOp()
+                && !event.getPlayer().hasPermission("pvptoolkit.admin")) {
             loggedPlayers.put(event.getPlayer().getName(), System.currentTimeMillis());
             offlinePlayers.add(event.getPlayer());
         }

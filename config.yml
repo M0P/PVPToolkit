@@ -13,10 +13,12 @@ modules:
             - tpa
             - tpahere
             - back
+            - top
             - v
+            - c windwalk
     pvplog:
         enabled: true
-        duration: 20
+        duration: 120
     pvpblock:
         enabled: false
         allow_attack: true

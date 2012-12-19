@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerFishEvent;
 public class PVPFly implements Listener {
     private PVPToolkit   pvptoolkit;
 
-    private final String MODULVERSION = "0.4";
+    public final String MODULVERSION = "1.1";
 
     public PVPFly(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
@@ -32,15 +32,17 @@ public class PVPFly implements Listener {
         if ((sender instanceof Player)) {
             Player player = (Player) sender;
             if (args.length == 0) {
-                if (player.hasPermission("pvptoolkit.fly.fly")) if (player.getAllowFlight()) {
-                    player.setFlying(false);
-                    player.setAllowFlight(false);
-                    player.sendMessage(ChatColor.GREEN + "Disabled fly mode!");
-                } else {
-                    player.setAllowFlight(true);
-                    player.setFlySpeed(0.1F);
-                    player.sendMessage(ChatColor.GREEN + "Enabled fly mode!");
-                }
+                if (player.hasPermission("pvptoolkit.fly.fly")
+                        || player.hasPermission("pvptoolkit.admin") || player.isOp())
+                    if (player.getAllowFlight()) {
+                        player.setFlying(false);
+                        player.setAllowFlight(false);
+                        player.sendMessage(ChatColor.GREEN + "Disabled fly mode!");
+                    } else {
+                        player.setAllowFlight(true);
+                        player.setFlySpeed(0.1F);
+                        player.sendMessage(ChatColor.GREEN + "Enabled fly mode!");
+                    }
             } else if (args.length == 1) {
                 if (args[0].equals("help")) {
                     player.sendMessage(ChatColor.RED
@@ -51,7 +53,8 @@ public class PVPFly implements Listener {
                     player.sendMessage("version " + MODULVERSION);
                     player.sendMessage("author: stolen and improved by " + ChatColor.GOLD + "M0P"
                             + ChatColor.RESET + ChatColor.BLACK + " (original by jorisk322)");
-                } else if (player.hasPermission("pvptoolkit.fly.other")) {
+                } else if (player.hasPermission("pvptoolkit.fly.other")
+                        || player.hasPermission("pvptoolkit.admin")) {
                     Player otherplayer = Bukkit.getPlayer(args[0]);
                     if (otherplayer != null) {
                         if (otherplayer.getAllowFlight()) {
@@ -76,8 +79,9 @@ public class PVPFly implements Listener {
         if (event.isCancelled()) return;
         if ((event.getBucket().compareTo(Material.LAVA_BUCKET) == 0)) {
             Player player = (Player) event.getPlayer();
-            if ((player.getAllowFlight()) && (!player.hasPermission("fly.damage"))
-                    && (player.getGameMode() != GameMode.CREATIVE)) {
+            if ((player.getAllowFlight()) && (!player.hasPermission("pvptoolkit.fly.damage"))
+                    && (player.getGameMode() != GameMode.CREATIVE)
+                    && !player.hasPermission("pvptoolkit.admin")) {
                 player.sendMessage(ChatColor.RED + "You can't place lava while in fly mode!");
                 event.setCancelled(true);
             }
@@ -89,8 +93,9 @@ public class PVPFly implements Listener {
         if (event.isCancelled()) return;
         if ((event.getCause().compareTo(IgniteCause.FLINT_AND_STEEL) == 0)) {
             Player player = (Player) event.getPlayer();
-            if ((player.getAllowFlight()) && (!player.hasPermission("fly.damage"))
-                    && (player.getGameMode() != GameMode.CREATIVE)) {
+            if ((player.getAllowFlight()) && (!player.hasPermission("pvptoolkit.fly.damage"))
+                    && (player.getGameMode() != GameMode.CREATIVE)
+                    && !player.hasPermission("pvptoolkit.admin")) {
                 player.sendMessage(ChatColor.RED
                         + "You can't use flint and steel while in fly mode!");
                 event.setCancelled(true);
@@ -103,8 +108,9 @@ public class PVPFly implements Listener {
         if (event.isCancelled()) return;
         if ((event.getDamager() instanceof Player) && !(event.getEntity() instanceof Monster)) {
             Player damager = (Player) event.getDamager();
-            if ((damager.getAllowFlight()) && (!damager.hasPermission("fly.damage"))
-                    && (damager.getGameMode() != GameMode.CREATIVE)) {
+            if ((damager.getAllowFlight()) && (!damager.hasPermission("pvptoolkit.fly.damage"))
+                    && (damager.getGameMode() != GameMode.CREATIVE)
+                    && !damager.hasPermission("pvptoolkit.admin")) {
                 damager.sendMessage(ChatColor.RED + "You can't attack while in fly mode!");
                 event.setCancelled(true);
             }
@@ -116,8 +122,9 @@ public class PVPFly implements Listener {
         if (event.isCancelled()) return;
         if ((event.getEntity() instanceof Player)) {
             Player receiver = (Player) event.getEntity();
-            if ((receiver.getAllowFlight()) && (receiver.hasPermission("fly.invincible")))
-                event.setCancelled(true);
+            if ((receiver.getAllowFlight())
+                    && ((receiver.hasPermission("pvptoolkit.fly.invincible")) || receiver
+                            .hasPermission("pvptoolkit.admin"))) event.setCancelled(true);
         }
     }
 
@@ -146,5 +153,4 @@ public class PVPFly implements Listener {
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@ public class PlayerTracker implements Listener {
     private PVPToolkit pvptoolkit;
 
     private int        trackingdistance;
+    public final String MODULVERSION = "1.1";
 
     public PlayerTracker(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
@@ -36,7 +37,7 @@ public class PlayerTracker implements Listener {
             Location targetLoc = null;
             double finaldistance = Double.MAX_VALUE, distance = 0;
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (!p.isOp() && p.hasPermission("pvptoolkit.playertracker.trackable")
+                if (!p.isOp() && p.hasPermission("pvptoolkit.playertracker.trackable") &&!p.hasPermission("pvptoolkit.admin")
                         && p != event.getPlayer() && p.getWorld() == event.getPlayer().getWorld()) {
                     distance = playerLoc.distance(p.getLocation());
                     if (distance < finaldistance) {

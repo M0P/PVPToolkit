@@ -2,7 +2,9 @@ package com.minecraftserver.pvptoolkit;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,6 +26,7 @@ public class PVPTagger implements Listener {
     private HashMap<String, Long> taggedPlayers = new HashMap<>();
 
     private List<String>          pvpTagBlockedCmds;
+    public final String           MODULVERSION  = "1.0";
 
     public PVPTagger(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
@@ -38,7 +41,7 @@ public class PVPTagger implements Listener {
         Player player = event.getPlayer();
         boolean notallowed = false;
         String command = event.getMessage().toLowerCase().substring(1, event.getMessage().length());
-        stopTagging(player);
+        stopTagging(player.getName());
         if (isTagged(player)) {
             for (String cmd : pvpTagBlockedCmds)
                 if (command.toLowerCase().startsWith(cmd)) {
@@ -58,27 +61,41 @@ public class PVPTagger implements Listener {
         taggedPlayers.put(player.getName(), System.currentTimeMillis());
     }
 
-    private void stopTagging(Player player) {
+    private boolean stopTagging(String playername) {
         long millis = System.currentTimeMillis();
-        if (taggedPlayers.containsKey(player.getName())) {
-            if (millis - taggedPlayers.get(player.getName()).longValue() >= (pvpTagDuration * 1000)) {
-                taggedPlayers.remove(player.getName());
+        if (taggedPlayers.containsKey(playername)) {
+            if (millis - taggedPlayers.get(playername).longValue() >= (pvpTagDuration * 1000)) {
+                taggedPlayers.remove(playername);
+                return true;
             }
         }
+        return false;
     }
 
     private void resetTagging(Player player) {
         if (taggedPlayers.containsKey(player.getName())) {
-            stopTagging(player);
+            stopTagging(player.getName());
             startTagging(player);
         }
 
     }
 
     public boolean isTagged(Player player) {
-        stopTagging(player);
+        stopTagging(player.getName());
         if (taggedPlayers.containsKey(player.getName())) return true;
         return false;
+
+    }
+
+    public void checkTaggedPlayers() {
+        Iterator iterator = taggedPlayers.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry pairs = (Map.Entry) iterator.next();
+            String key = (String) pairs.getKey();
+            if (stopTagging(key))
+                pvptoolkit.getServer().getPlayer(key)
+                        .sendMessage(ChatColor.GOLD + "You are no longer tagged");
+        }
 
     }
 
@@ -95,16 +112,17 @@ public class PVPTagger implements Listener {
             }
             if ((dmgr instanceof Player) && (e.getEntity() instanceof Player)) {
                 Player damager = (Player) dmgr;
-                Player tagged = (Player) e.getEntity();
+                Player receiver = (Player) e.getEntity();
                 if (!damager.getAllowFlight()) {
-                    if (!damager.hasPermission("pvptoolkit.blocker.nottagable"))
-                        if (isTagged(damager)) {
-                            resetTagging(damager);
-                        } else startTagging(damager);
-                    if (!tagged.hasPermission("pvptoolkit.blocker.nottagable"))
-                        if (isTagged(tagged)) {
-                            resetTagging(tagged);
-                        } else startTagging(tagged);
+                    if (!damager.hasPermission("pvptoolkit.blocker.nottagable") && !damager.isOp()
+                            && !damager.hasPermission("pvptoolkit.admin")) if (isTagged(damager)) {
+                        resetTagging(damager);
+                    } else startTagging(damager);
+                    if (!receiver.hasPermission("pvptoolkit.blocker.nottagable")
+                            && !receiver.isOp() && !receiver.hasPermission("pvptoolkit.admin"))
+                        if (isTagged(receiver)) {
+                            resetTagging(receiver);
+                        } else startTagging(receiver);
                 }
             }
         }

@@ -33,8 +33,8 @@ public class PVPToolkit extends JavaPlugin {
 
     private PVPTagger             pvptagger;
     private PVPLogger             pvplogger;
-    private PVPBlocker            pvpblocker;
-    private PVPBlockerPassword    pvpblockerPassword;
+    // private PVPBlocker pvpblocker;
+    // private PVPBlockerPassword pvpblockerPassword;
     private PVPFly                pvpfly;
 
     private PlayerTracker         playertracker;
@@ -43,7 +43,7 @@ public class PVPToolkit extends JavaPlugin {
         FileConfiguration cfg = this.getConfig();
 
         pvpTagEnabled = cfg.getBoolean("modules.pvptag.enabled");
-        pvpBlockerEnabled = cfg.getBoolean("modules.pvpblock.enabled");
+        // pvpBlockerEnabled = cfg.getBoolean("modules.pvpblock.enabled");
         pvpLoggerEnabled = cfg.getBoolean("modules.pvplog.enabled");
         playerTrackerEnabled = cfg.getBoolean("modules.playertracker.enabled");
         pvpFlyEnabled = cfg.getBoolean("modules.pvpfly.enabled");
@@ -53,8 +53,9 @@ public class PVPToolkit extends JavaPlugin {
             pvpTagBlockedCmds = cfg.getStringList("modules.pvptag.blockedcmds");
             if (pvpLoggerEnabled) pvpLogDuration = cfg.getInt("modules.pvplog.duration");
         }
-        if (pvpBlockerEnabled)
-            pvpBlockAttackAllowed = cfg.getBoolean("modules.pvpblock.allow_attack");
+        // if (pvpBlockerEnabled)
+        // pvpBlockAttackAllowed =
+        // cfg.getBoolean("modules.pvpblock.allow_attack");
         if (playerTrackerEnabled)
             trackingdistance = cfg.getInt("modules.playertracker.trackdistance", 350);
     }
@@ -75,11 +76,11 @@ public class PVPToolkit extends JavaPlugin {
                 this.getLogger().log(Level.INFO, "PVP Logger loaded");
             }
         }
-        if (pvpBlockerEnabled) {
-            pvpblocker = new PVPBlocker(this);
-            pm.registerEvents(pvpblocker, this);
-            this.getLogger().log(Level.INFO, "PVP Blocker loaded");
-        }
+        // if (pvpBlockerEnabled) {
+        // pvpblocker = new PVPBlocker(this);
+        // pm.registerEvents(pvpblocker, this);
+        // this.getLogger().log(Level.INFO, "PVP Blocker loaded");
+        // }
         if (playerTrackerEnabled) {
             playertracker = new PlayerTracker(this);
             pm.registerEvents(playertracker, this);
@@ -101,15 +102,46 @@ public class PVPToolkit extends JavaPlugin {
                     if (pvpTagEnabled && !player.hasPermission("pvptoolkit.blocker.nottagable"))
                         player.sendMessage(ChatColor.BLUE + "Type " + ChatColor.GOLD + "/pvp tag"
                                 + ChatColor.BLUE + " to see if you are tagged");
+                    if (pvpFlyEnabled
+                            && (player.hasPermission("pvptoolkit.fly.fly") || player
+                                    .hasPermission("pvptoolkit.admin")))
+                        player.sendMessage(ChatColor.BLUE + "Type " + ChatColor.GOLD + "/fly help"
+                                + ChatColor.BLUE + " for information about the fly command");
+                    if (playerTrackerEnabled
+                            && (player.hasPermission("pvptoolkit.playertracker.cantrack") || player
+                                    .hasPermission("pvptoolkit.admin")))
+                        player.sendMessage(ChatColor.BLUE + "Right click a block using a "
+                                + ChatColor.GOLD + " compass " + ChatColor.BLUE
+                                + " to track the nearest player around you");
                 } else {
-                    if (args[0].equalsIgnoreCase("tag") && pvpTagEnabled
-                            && !player.hasPermission("pvptoolkit.blocker.nottagable")) {
+                    if (args[0].equalsIgnoreCase("tag") && pvpTagEnabled) {
                         if (pvptagger.isTagged(player))
                             player.sendMessage(ChatColor.BLUE + "You are currently "
                                     + ChatColor.RED + "tagged");
                         else player.sendMessage(ChatColor.BLUE + "You are currently "
                                 + ChatColor.RED + "not tagged");
-
+                    } else if (args[0].equalsIgnoreCase("reload")
+                            && player.hasPermission("pvptoolkit.admin")) {
+                        onDisable();
+                        onEnable();
+                    } else if (args[0].equalsIgnoreCase("version")) {
+                        player.sendMessage(ChatColor.BLUE + "Version: " + ChatColor.GOLD
+                                + this.getVersion() + " \n" + ChatColor.BLUE + "Made by "
+                                + ChatColor.GOLD + "M0P\n" + ChatColor.BLUE + "Thanks to "
+                                + ChatColor.GOLD + "AquaXV" + ChatColor.BLUE
+                                + " for helping and testing alot.");
+                        if (pvpFlyEnabled)
+                            player.sendMessage(ChatColor.BLUE + "Fly modul version: "
+                                    + ChatColor.GOLD + pvpfly.MODULVERSION);
+                        if (pvpLoggerEnabled)
+                            player.sendMessage(ChatColor.BLUE + "PVPlogger modul version: "
+                                    + ChatColor.GOLD + pvplogger.MODULVERSION);
+                        if (pvpTagEnabled)
+                            player.sendMessage(ChatColor.BLUE + "PVPtagger modul version: "
+                                    + ChatColor.GOLD + pvptagger.MODULVERSION);
+                        if (playerTrackerEnabled)
+                            player.sendMessage(ChatColor.BLUE + "Playertracker modul version: "
+                                    + ChatColor.GOLD + playertracker.MODULVERSION);
                     }
                 }
                 return false;
@@ -139,6 +171,10 @@ public class PVPToolkit extends JavaPlugin {
         return pvpLogDuration;
     }
 
+    private String getVersion() {
+        return this.getDescription().getVersion();
+    }
+
     public List<String> getPvpTagBlockedCmds() {
         return pvpTagBlockedCmds;
     }
@@ -158,7 +194,7 @@ public class PVPToolkit extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (pvpblockerPassword != null) pvpblockerPassword.saveData();
+        // if (pvpblockerPassword != null) pvpblockerPassword.saveData();
         if (pvpLoggerEnabled) pvplogger.saveData();
         log(name + " is Disabled");
     }

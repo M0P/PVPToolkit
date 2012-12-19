@@ -11,11 +11,14 @@ commands:
       permission-message: You don't have permission to do that!
    pvp:
       description: Collection of commands for the different modules
-      usage: /<command> [username]
+      usage: /<command> [subcommand]
       permission: pvptoolkit
       permission-message: You don't have permission to do that!
       
 permissions:
+    pvptoolkit.admin:
+        description: grants all permissions
+        default: op      
     pvptoolkit.blocker.block:
         description: blocks pvp of player
         default: op
