@@ -32,7 +32,6 @@ public class PVPFly implements Listener {
     }
 
     public void togglefly(CommandSender sender, String[] args) {
-        Bukkit.broadcastMessage("Fly command." + enabled);
         if ((sender instanceof Player) && enabled) {
             Player player = (Player) sender;
             if (args.length == 0) {
@@ -159,7 +158,6 @@ public class PVPFly implements Listener {
     }
 
     public void disable() {
-        Bukkit.broadcastMessage("Disable Fly module");
         enabled = false;
     }
 }

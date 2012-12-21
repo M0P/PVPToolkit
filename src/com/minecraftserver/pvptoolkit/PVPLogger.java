@@ -83,7 +83,6 @@ public class PVPLogger implements Listener {
                 && !event.getPlayer().hasPermission("pvptoolkit.logger.notlogable")
                 && !event.getPlayer().isOp()
                 && !event.getPlayer().hasPermission("pvptoolkit.admin")) {
-            Bukkit.broadcastMessage("Pvp Log enabled:" + enabled);
             loggedPlayers.put(event.getPlayer().getName(), System.currentTimeMillis());
             offlinePlayers.add(event.getPlayer());
         }

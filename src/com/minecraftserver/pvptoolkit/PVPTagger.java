@@ -102,7 +102,6 @@ public class PVPTagger implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
-        Bukkit.broadcastMessage("Pvp Tag enabled:" + enabled);
         if (event.isCancelled() || (event.getDamage() == 0) || !enabled) {
             return;
         }
