@@ -89,7 +89,8 @@ public class PVPTagger implements Listener {
     }
 
     public void checkTaggedPlayers() {
-        Iterator iterator = taggedPlayers.entrySet().iterator();
+        HashMap<String, Long> tempMap = (HashMap<String, Long>) taggedPlayers.clone();
+        Iterator iterator = tempMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry pairs = (Map.Entry) iterator.next();
             String key = (String) pairs.getKey();
