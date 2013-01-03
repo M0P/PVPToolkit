@@ -26,7 +26,7 @@ public class PVPTagger implements Listener {
     private HashMap<String, Long> taggedPlayers = new HashMap<>();
 
     private List<String>          pvpTagBlockedCmds;
-    public final String           MODULVERSION  = "1.0";
+    public final String           MODULVERSION  = "1.1";
     private boolean               enabled;
 
     public PVPTagger(PVPToolkit toolkit) {
@@ -36,7 +36,7 @@ public class PVPTagger implements Listener {
         enabled = true;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if (event.isCancelled() || !enabled) return;
         Player player = event.getPlayer();
@@ -101,7 +101,7 @@ public class PVPTagger implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGH)
     public void onPlayerDamage(EntityDamageEvent event) {
         if (event.isCancelled() || (event.getDamage() == 0) || !enabled) {
             return;
