@@ -1,0 +1,7 @@
+{
+  "versions": {
+    "version": "1.41",
+    "download": "http://www.pvp.mcs.square7.ch/PVPToolkit.jar"
+    "changelog": "Tags stops on death"
+  }
+}

@@ -47,7 +47,7 @@ public class PVPToolkit extends JavaPlugin {
     private PlayerTracker         playertracker;
     private PluginManager         pm;
 
-    public void loadConfiguration() {
+    public FileConfiguration loadConfiguration() {
         YamlConfiguration cfg = PVPIOManager.loadConfig();
         if (cfg == null) {
             PVPIOManager.firstRun();
@@ -72,6 +72,7 @@ public class PVPToolkit extends JavaPlugin {
         // cfg.getBoolean("modules.pvpblock.allow_attack");
         if (playerTrackerEnabled)
             trackingdistance = cfg.getInt("modules.playertracker.trackdistance", 350);
+        return cfg;
     }
 
     private void enableModules() {
@@ -188,6 +189,11 @@ public class PVPToolkit extends JavaPlugin {
 
     public int getPvpTagDuration() {
         return pvpTagDuration;
+    }
+    
+    public FileConfiguration getConfig(){
+        return loadConfiguration();
+       
     }
 
     public PVPTagger getPvptagger() {

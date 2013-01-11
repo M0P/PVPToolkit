@@ -30,3 +30,5 @@ modules:
         trackdistance: 350
     pvpfly:
         enabled: true
+upm: true
+upm_update: www.pvp.mcs.square7.ch/pvptoolkit.json

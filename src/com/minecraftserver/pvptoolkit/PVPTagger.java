@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class PVPTagger implements Listener {
@@ -56,6 +57,11 @@ public class PVPTagger implements Listener {
                 return;
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (isTagged(event.getEntity())) taggedPlayers.remove(event.getEntity().getName());
     }
 
     private void startTagging(final Player player) {
@@ -101,7 +107,7 @@ public class PVPTagger implements Listener {
 
     }
 
-    @EventHandler (priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerDamage(EntityDamageEvent event) {
         if (event.isCancelled() || (event.getDamage() == 0) || !enabled) {
             return;
