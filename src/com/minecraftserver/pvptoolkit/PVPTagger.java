@@ -64,7 +64,7 @@ public class PVPTagger implements Listener {
         if (isTagged(event.getEntity())) taggedPlayers.remove(event.getEntity().getName());
     }
 
-    private void startTagging(final Player player) {
+    public void startTagging(final Player player) {
         taggedPlayers.put(player.getName(), System.currentTimeMillis());
     }
 

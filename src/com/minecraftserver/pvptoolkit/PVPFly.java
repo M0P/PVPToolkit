@@ -6,6 +6,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -109,9 +110,14 @@ public class PVPFly implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onHit(EntityDamageByEntityEvent event) {
         if (event.isCancelled() || !enabled) return;
-        if ((event.getDamager() instanceof Player) && !(event.getEntity() instanceof Monster)) {
-            Player damager = (Player) event.getDamager();
-            if ((damager.getAllowFlight()) && (!damager.hasPermission("pvptoolkit.fly.damage"))
+        if (!(event.getEntity() instanceof Monster) && !(event.getDamager() instanceof Monster)) {
+            Player damager = null;
+            if ((event.getDamager() instanceof Player)) damager = (Player) event.getDamager();
+            if (event.getDamager() instanceof Arrow
+                    && ((Arrow) event.getDamager()).getShooter() instanceof Player)
+                damager = (Player) ((Arrow) event.getDamager()).getShooter();
+            if ((damager != null && damager.getAllowFlight())
+                    && (!damager.hasPermission("pvptoolkit.fly.damage"))
                     && (damager.getGameMode() != GameMode.CREATIVE)
                     && !damager.hasPermission("pvptoolkit.admin")) {
                 damager.sendMessage(ChatColor.RED + "You can't attack while in fly mode!");
@@ -131,18 +137,19 @@ public class PVPFly implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onShoot(EntityShootBowEvent event) {
-        if (event.isCancelled() || !enabled) return;
-        if ((event.getEntity() instanceof Player)) {
-            Player archer = (Player) event.getEntity();
-            if ((archer.getAllowFlight()) && (!archer.hasPermission("fly.damage"))
-                    && (archer.getGameMode() != GameMode.CREATIVE)) {
-                archer.sendMessage(ChatColor.RED + "You can't attack while in fly mode!");
-                event.setCancelled(true);
-            }
-        }
-    }
+    // @EventHandler(priority = EventPriority.NORMAL)
+    // public void onShoot(EntityShootBowEvent event) {
+    // if (event.isCancelled() || !enabled) return;
+    // if ((event.getEntity() instanceof Player)) {
+    // Player archer = (Player) event.getEntity();
+    // if ((archer.getAllowFlight()) && (!archer.hasPermission("fly.damage"))
+    // && (archer.getGameMode() != GameMode.CREATIVE)) {
+    // archer.sendMessage(ChatColor.RED +
+    // "You can't attack while in fly mode!");
+    // event.setCancelled(true);
+    // }
+    // }
+    // }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerFish(PlayerFishEvent event) {

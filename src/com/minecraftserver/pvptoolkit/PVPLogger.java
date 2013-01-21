@@ -9,6 +9,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -64,6 +65,8 @@ public class PVPLogger implements Listener {
                                     }
                                     markedtoremoval.add(key);
                                     offlinePlayers.remove(deadplayer);
+                                    Bukkit.broadcastMessage(ChatColor.AQUA + deadplayer.getName()
+                                            + ChatColor.RED + " died because he PvP logged");
                                     deadplayers.add(deadplayer.getName());
                                 } else pvptoolkit.getLogger().log(Level.WARNING,
                                         "PVP Logger: Couldnt find Playerdata of logged player");
@@ -91,6 +94,7 @@ public class PVPLogger implements Listener {
     @EventHandler
     public void PlayerLogIn(PlayerJoinEvent event) {
         if (enabled && loggedPlayers.containsKey(event.getPlayer().getName())) {
+            pvpTagger.startTagging(event.getPlayer());
             markedtoremoval.add(event.getPlayer().getName());
             for (Player player : offlinePlayers)
                 if (player.getName().equals(event.getPlayer().getName())) {

@@ -1,7 +1,9 @@
 package com.minecraftserver.pvptoolkit;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,33 +23,33 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.permissions.BroadcastPermissions;
 
 public class PVPToolkit extends JavaPlugin {
-    protected final static Logger logger = Logger.getLogger("Minecraft");
-    public static final String    name   = "PVPToolkit";
+    protected final static Logger               logger     = Logger.getLogger("Minecraft");
+    public static final String                  name       = "PVPToolkit";
 
-    private int                   pvpTagDuration;
-    private int                   pvpLogDuration;
-    private int                   trackingdistance;
+    private int                                 pvpTagDuration;
+    private int                                 pvpLogDuration;
+    private int                                 trackingdistance;
 
-    private boolean               pvpBlockAttackAllowed;
+    private boolean                             pvpBlockAttackAllowed;
 
-    private List<String>          pvpTagBlockedCmds;
+    private List<String>                        pvpTagBlockedCmds;
 
-    private boolean               pvpTagEnabled;
-    private boolean               pvpBlockerEnabled;
-    private boolean               pvpLoggerEnabled;
-    private boolean               playerTrackerEnabled;
-    private boolean               pvpFlyEnabled;
+    private boolean                             pvpTagEnabled;
+    private boolean                             pvpBlockerEnabled;
+    private boolean                             pvpLoggerEnabled;
+    private boolean                             playerTrackerEnabled;
+    private boolean                             pvpFlyEnabled;
 
-    private PVPTagger             pvptagger;
-    private PVPLogger             pvplogger;
+    private PVPTagger                           pvptagger;
+    private PVPLogger                           pvplogger;
     // private PVPBlocker pvpblocker;
     // private PVPBlockerPassword pvpblockerPassword;
-    private PVPFly                pvpfly;
+    private PVPFly                              pvpfly;
 
-    private PlayerTracker         playertracker;
-    private PluginManager         pm;
-
-    public FileConfiguration loadConfiguration() {
+    private PlayerTracker                       playertracker;
+    private PluginManager                       pm;
+    
+    private void loadConfiguration() {
         YamlConfiguration cfg = PVPIOManager.loadConfig();
         if (cfg == null) {
             PVPIOManager.firstRun();
@@ -72,7 +74,6 @@ public class PVPToolkit extends JavaPlugin {
         // cfg.getBoolean("modules.pvpblock.allow_attack");
         if (playerTrackerEnabled)
             trackingdistance = cfg.getInt("modules.playertracker.trackdistance", 350);
-        return cfg;
     }
 
     private void enableModules() {
@@ -189,11 +190,6 @@ public class PVPToolkit extends JavaPlugin {
 
     public int getPvpTagDuration() {
         return pvpTagDuration;
-    }
-    
-    public FileConfiguration getConfig(){
-        return loadConfiguration();
-       
     }
 
     public PVPTagger getPvptagger() {
