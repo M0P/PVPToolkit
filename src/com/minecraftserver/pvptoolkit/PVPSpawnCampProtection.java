@@ -2,7 +2,6 @@ package com.minecraftserver.pvptoolkit;
 
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -34,7 +33,6 @@ public class PVPSpawnCampProtection implements Listener {
         radius = pvptoolkit.getspawnprotectradius();
         ess = (IEssentials) toolkit.getServer().getPluginManager()
                 .getPlugin("Essentials");
-        if (ess == null) Bukkit.broadcastMessage("ERROR essentials sucks");
         enabled = true;
     }
 
@@ -65,7 +63,6 @@ public class PVPSpawnCampProtection implements Listener {
             if ((int) event.getTo().distance(
                     protectedPlayers.get(event.getPlayer().getName())) > radius) {
                 protectedPlayers.remove(event.getPlayer().getName());
-                Bukkit.broadcastMessage("removed");
             }
         }
     }
@@ -89,7 +86,6 @@ public class PVPSpawnCampProtection implements Listener {
             }
             event.setRespawnLocation(home);
             protectedPlayers.put(event.getPlayer().getName(), home);
-            Bukkit.broadcastMessage(home.toString());
         }
     }
 
