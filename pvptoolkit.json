@@ -1,7 +1,7 @@
 {
   "versions": {
-    "version": "1.58",
+    "version": "1.60",
     "download": "http://www.pvp.mcs.square7.ch/PVPToolkit.jar"
-    "changelog": "SpawnCampProtection added, Longer distance perm node for Playertracker added"
+    "changelog": "small bug fix to reduce error spam in console ;)"
   }
 }

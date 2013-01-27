@@ -81,7 +81,7 @@ public class PVPSpawnCampProtection implements Listener {
                 try {
                     home = user.getHome();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    home = event.getRespawnLocation();
                 }
             }
             event.setRespawnLocation(home);
