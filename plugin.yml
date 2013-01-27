@@ -1,7 +1,7 @@
 name: PVPToolkit
 main: com.minecraftserver.pvptoolkit.PVPToolkit
 website: http://www.minecraftserver.com/
-version: 1.44
+version: 1.57
 author: M0P
 commands:
    fly:
@@ -16,15 +16,6 @@ permissions:
     pvptoolkit.admin:
         description: grants all permissions
         default: op      
-    pvptoolkit.blocker.block:
-        description: blocks pvp of player
-        default: op
-    pvptoolkit.blocker.bypassblock:
-        description: bypasses pvp protections
-        default: op
-    pvptoolkit.blockerpassword.protection:
-        description: enabled password pvp protection
-        default: false        
     pvptoolkit.tagger.nottagable:
         description: player cant be tagged
         default: op
@@ -36,6 +27,12 @@ permissions:
         default: op
     pvptoolkit.playertracker.cantrack:
         description: Allows you to track other players
+        default: op
+    pvptoolkit.playertracker.cantrack.advanced:
+        description: Allows you to use advanced tracking distance
+        default: op
+    pvptoolkit.spawnprot:
+        description: Enables Spawn Camp Protection for this player
         default: op
     pvptoolkit.fly.fly:
         description: Allows you to fly

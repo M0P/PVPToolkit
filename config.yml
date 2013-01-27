@@ -19,17 +19,15 @@ modules:
     pvplog:
         enabled: true
         duration: 120
-    pvpblock:
-        enabled: false
-        allow_attack: true
-    pvpblockpassword:
-        enabled: false
-        default_password: strength
     playertracker:
         enabled: true
-        trackdistance: 350
+        smalltrackdistance: 350
+        advancedtrackdistance: 700
     pvpfly:
         enabled: true
+    spawnprotect:
+        enabled: true
+        radius: 2
 upm: true
 upm_update: http://www.pvp.mcs.square7.ch/pvptoolkit.json
 upm_configtype:
@@ -41,14 +39,12 @@ upm_configtype:
         pvplog:
             enabled: boolean
             duration: int
-        pvpblock:
-            enabled: boolean
-            allow_attack: boolean
-        pvpblockpassword:
-            enabled: boolean
-            default_password: string
         playertracker:
             enabled: boolean
-            trackdistance: int
+            smalltrackdistance: int
+            advancedtrackdistance: int
         pvpfly:
             enabled: boolean
+        spawnprotect:
+            enabled: boolean
+            radius: int

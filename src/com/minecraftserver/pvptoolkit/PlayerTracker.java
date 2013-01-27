@@ -11,16 +11,23 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerTracker implements Listener {
-    private PVPToolkit  pvptoolkit;
+    private final PVPToolkit pvptoolkit;
 
-    private int         trackingdistance;
-    public final String MODULVERSION = "1.1";
-    private boolean     enabled;
+    private int              smalltrackingdistance;
+    private int              advancedtrackingdistance;
+    public final String      MODULVERSION = "1.2";
+    private boolean          enabled;
 
     public PlayerTracker(PVPToolkit toolkit) {
         pvptoolkit = toolkit;
-        this.trackingdistance = pvptoolkit.getTrackingdistance();
+        this.smalltrackingdistance = pvptoolkit.getsmallTrackingdistance();
+        this.advancedtrackingdistance = pvptoolkit
+                .getadvancedTrackingdistance();
         enabled = true;
+    }
+
+    public void disable() {
+        enabled = false;
     }
 
     @EventHandler
@@ -28,7 +35,8 @@ public class PlayerTracker implements Listener {
         if (event.isCancelled() || !enabled) return;
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK)
                 && event.getMaterial() == Material.COMPASS
-                && event.getPlayer().hasPermission("pvptoolkit.playertracker.cantrack")
+                && event.getPlayer().hasPermission(
+                        "pvptoolkit.playertracker.cantrack")
                 && !(event.getClickedBlock().getType() == Material.CHEST
                         || event.getClickedBlock().getType() == Material.FURNACE
                         || event.getClickedBlock().getType() == Material.WORKBENCH
@@ -39,8 +47,10 @@ public class PlayerTracker implements Listener {
             Location targetLoc = null;
             double finaldistance = Double.MAX_VALUE, distance = 0;
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (!p.isOp() && p.hasPermission("pvptoolkit.playertracker.trackable")
-                        && !p.hasPermission("pvptoolkit.admin") && p != event.getPlayer()
+                if (!p.isOp()
+                        && p.hasPermission("pvptoolkit.playertracker.trackable")
+                        && !p.hasPermission("pvptoolkit.admin")
+                        && p != event.getPlayer()
                         && p.getWorld() == event.getPlayer().getWorld()) {
                     distance = playerLoc.distance(p.getLocation());
                     if (distance < finaldistance) {
@@ -49,17 +59,25 @@ public class PlayerTracker implements Listener {
                     }
                 }
             }
+            int trackingdistance = smalltrackingdistance;
+            if (event.getPlayer().hasPermission(
+                    "pvptoolkit.playertracker.cantrack.advanced"))
+                trackingdistance = advancedtrackingdistance;
             if (targetLoc != null && finaldistance < trackingdistance) {
                 event.getPlayer().sendMessage(
                         ChatColor.BLUE + "The next player is " + ChatColor.GOLD
-                                + (int) finaldistance + ChatColor.BLUE + " blocks away from you.");
+                                + (int) finaldistance + ChatColor.BLUE
+                                + " blocks away from you.");
                 event.getPlayer().setCompassTarget(targetLoc);
-            } else event.getPlayer().sendMessage(ChatColor.BLUE + "There is no player near you!");
+            } else event.getPlayer().sendMessage(
+                    ChatColor.BLUE + "There is no player near you!");
 
         }
     }
 
-    public void disable() {
-        enabled = false;
+    public void reloadcfg() {
+        this.smalltrackingdistance = pvptoolkit.getsmallTrackingdistance();
+        this.advancedtrackingdistance = pvptoolkit
+                .getadvancedTrackingdistance();
     }
 }
