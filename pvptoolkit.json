@@ -1,7 +1,7 @@
 {
   "versions": {
-    "version": "1.44",
+    "version": "1.58",
     "download": "http://www.pvp.mcs.square7.ch/PVPToolkit.jar"
-    "changelog": "Fixed Bug causing error when skeleton shooting arrow"
+    "changelog": "SpawnCampProtection added, Longer distance perm node for Playertracker added"
   }
 }

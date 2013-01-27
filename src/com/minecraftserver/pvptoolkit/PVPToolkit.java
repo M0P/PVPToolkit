@@ -117,9 +117,9 @@ public class PVPToolkit extends JavaPlugin {
                         else player.sendMessage(ChatColor.BLUE
                                 + "You are currently " + ChatColor.RED
                                 + "not tagged");
-                    } else if (args[0].equalsIgnoreCase("reload-cfg")
+                    } else if (args[0].equalsIgnoreCase("reload")
                             && player.hasPermission("pvptoolkit.admin")) {
-                        reloadcfg();
+                        reload();
                     } else if (args[0].equalsIgnoreCase("version")) {
                         player.sendMessage(ChatColor.BLUE + "Version: "
                                 + ChatColor.GOLD + this.getVersion() + " \n"
@@ -181,8 +181,9 @@ public class PVPToolkit extends JavaPlugin {
 
     }
 
-    public void reloadcfg() {
+    public void reload() {
         loadConfiguration();
+        enableModules();
         if (spawnProtectEnabled) spawnProtect.reloadcfg();
         if (pvpTagEnabled) pvptagger.reloadcfg();
         if (playerTrackerEnabled) playertracker.reloadcfg();
@@ -191,45 +192,39 @@ public class PVPToolkit extends JavaPlugin {
     private void enableModules() {
         pm = getServer().getPluginManager();
         if (pvpTagEnabled) {
-            if (pvptagger == null) pvptagger = new PVPTagger(this);
-            pm.registerEvents(pvptagger, this);
-            this.getLogger().log(Level.INFO, "PVP Tagger loaded");
-
-            if (pvpLoggerEnabled) {
-                if (pvplogger == null) pvplogger = new PVPLogger(this);
+            if (pvptagger == null) {
+                pvptagger = new PVPTagger(this);
+                pm.registerEvents(pvptagger, this);
+                this.getLogger().log(Level.INFO, "PVP Tagger loaded");
+            }
+        }
+        if (pvpLoggerEnabled && pvpTagEnabled) {
+            if (pvplogger == null) {
+                pvplogger = new PVPLogger(this);
                 pm.registerEvents(pvplogger, this);
                 this.getLogger().log(Level.INFO, "PVP Logger loaded");
-
-            } else if (pvplogger != null) {
-                pvplogger.disable();
-                pvplogger = null;
             }
-        } else if (pvptagger != null) {
-            pvptagger.disable();
-            pvptagger = null;
         }
-
         if (playerTrackerEnabled) {
-            if (playertracker == null) playertracker = new PlayerTracker(this);
-            pm.registerEvents(playertracker, this);
-            this.getLogger().log(Level.INFO, "Player Tracker loaded");
-        } else if (playertracker != null) {
-            playertracker.disable();
-            playertracker = null;
+            if (playertracker == null) {
+                playertracker = new PlayerTracker(this);
+                pm.registerEvents(playertracker, this);
+                this.getLogger().log(Level.INFO, "Player Tracker loaded");
+            }
         }
         if (pvpFlyEnabled) {
-            if (pvpfly == null) pvpfly = new PVPFly(this);
-            pm.registerEvents(pvpfly, this);
-            this.getLogger().log(Level.INFO, "PVP Fly loaded");
-        } else if (pvpfly != null) {
-            pvpfly.disable();
-            pvpfly = null;
+            if (pvpfly == null) {
+                pvpfly = new PVPFly(this);
+                pm.registerEvents(pvpfly, this);
+                this.getLogger().log(Level.INFO, "PVP Fly loaded");
+            }
         }
         if (spawnProtectEnabled) {
-            if (spawnProtect == null)
+            if (spawnProtect == null) {
                 spawnProtect = new PVPSpawnCampProtection(this);
-            pm.registerEvents(spawnProtect, this);
-            this.getLogger().log(Level.INFO, "Respawn Protection loaded");
+                pm.registerEvents(spawnProtect, this);
+                this.getLogger().log(Level.INFO, "Respawn Protection loaded");
+            }
         }
 
     }
@@ -248,11 +243,13 @@ public class PVPToolkit extends JavaPlugin {
                             "PVPToolkit: Config could not be loaded, using default config");
         }
 
-        pvpTagEnabled = cfg.getBoolean("modules.pvptag.enabled");
-        pvpLoggerEnabled = cfg.getBoolean("modules.pvplog.enabled");
-        playerTrackerEnabled = cfg.getBoolean("modules.playertracker.enabled");
-        spawnProtectEnabled = cfg.getBoolean("modules.spawnprotect.enabled");
-        pvpFlyEnabled = cfg.getBoolean("modules.pvpfly.enabled");
+        pvpTagEnabled = cfg.getBoolean("modules.pvptag.enabled", false);
+        pvpLoggerEnabled = cfg.getBoolean("modules.pvplog.enabled", false);
+        playerTrackerEnabled = cfg.getBoolean("modules.playertracker.enabled",
+                false);
+        spawnProtectEnabled = cfg.getBoolean("modules.spawnprotect.enabled",
+                false);
+        pvpFlyEnabled = cfg.getBoolean("modules.pvpfly.enabled", false);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Essentials") == null) {
             spawnProtectEnabled = false;
@@ -269,7 +266,7 @@ public class PVPToolkit extends JavaPlugin {
             smalltrackingdistance = cfg.getInt(
                     "modules.playertracker.smalltrackdistance", 350);
             advancedtrackingdistance = cfg.getInt(
-                    "modules.playertracker.advancedtrackdistance", 600);
+                    "modules.playertracker.advancedtrackdistance", 700);
         }
         if (spawnProtectEnabled)
             spawnprotectradius = cfg.getInt("modules.spawnprotect.radius", 2);
