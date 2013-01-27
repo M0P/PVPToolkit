@@ -31,4 +31,24 @@ modules:
     pvpfly:
         enabled: true
 upm: true
-upm_update: www.pvp.mcs.square7.ch/pvptoolkit.json
+upm_update: http://www.pvp.mcs.square7.ch/pvptoolkit.json
+upm_configtype:
+    modules:
+        pvptag:
+            enabled: boolean
+            duration: int
+            blockedcmds: list
+        pvplog:
+            enabled: boolean
+            duration: int
+        pvpblock:
+            enabled: boolean
+            allow_attack: boolean
+        pvpblockpassword:
+            enabled: boolean
+            default_password: string
+        playertracker:
+            enabled: boolean
+            trackdistance: int
+        pvpfly:
+            enabled: boolean

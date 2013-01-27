@@ -1,7 +1,7 @@
 {
   "versions": {
-    "version": "1.41",
+    "version": "1.44",
     "download": "http://www.pvp.mcs.square7.ch/PVPToolkit.jar"
-    "changelog": "Tags stops on death"
+    "changelog": "Fixed Bug causing error when skeleton shooting arrow"
   }
 }
