@@ -1,7 +1,7 @@
 {
   "versions": {
-    "version": "1.60",
+    "version": "1.62",
     "download": "http://www.pvp.mcs.square7.ch/PVPToolkit.jar"
-    "changelog": "small bug fix to reduce error spam in console ;)"
+    "changelog": "small bug fixes to reduce error spam in console ;) and armor drop on pvplog death"
   }
 }
