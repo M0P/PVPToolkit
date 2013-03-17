@@ -25,7 +25,7 @@ public class PVPSpawnCampProtection implements Listener {
 
     private final HashMap<String, Location> protectedPlayers = new HashMap<String, Location>();
 
-    public final String                     MODULVERSION     = "1.01";
+    public final String                     MODULVERSION     = "1.02";
     private final boolean                   enabled;
 
     public PVPSpawnCampProtection(PVPToolkit toolkit) {
@@ -60,8 +60,12 @@ public class PVPSpawnCampProtection implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         if (event.isCancelled()) return;
         if (protectedPlayers.containsKey(event.getPlayer().getName())) {
-            if ((int) event.getTo().distance(
-                    protectedPlayers.get(event.getPlayer().getName())) > radius) {
+            try {
+                if ((int) event.getTo().distance(
+                        protectedPlayers.get(event.getPlayer().getName())) > radius) {
+                    protectedPlayers.remove(event.getPlayer().getName());
+                }
+            } catch (Exception e) {
                 protectedPlayers.remove(event.getPlayer().getName());
             }
         }
@@ -71,7 +75,9 @@ public class PVPSpawnCampProtection implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         if (protectedPlayers.containsKey(event.getPlayer().getName()))
             protectedPlayers.remove(event.getPlayer().getName());
-        if (event.getPlayer().hasPermission("pvptoolkit.spawnprot")) {
+        if (event.getPlayer().hasPermission("pvptoolkit.spawnprot")
+                && event.getPlayer().getWorld() == pvptoolkit.getServer()
+                        .getWorld("world")) {
             Location home = event.getRespawnLocation();
             final User user = ess.getUser(event.getPlayer());
             final Location bed = user.getBedSpawnLocation();

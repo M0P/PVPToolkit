@@ -1,7 +1,7 @@
 {
   "versions": {
-    "version": "1.62",
+    "version": "1.68",
     "download": "http://www.pvp.mcs.square7.ch/PVPToolkit.jar"
-    "changelog": "small bug fixes to reduce error spam in console ;) and armor drop on pvplog death"
+    "changelog": "quick fix: /fly is no longer possible when tagged"
   }
 }

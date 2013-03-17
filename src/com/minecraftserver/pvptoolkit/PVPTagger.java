@@ -24,7 +24,7 @@ public class PVPTagger implements Listener {
     private final HashMap<String, Long> taggedPlayers = new HashMap<>();
 
     private List<String>                pvpTagBlockedCmds;
-    public final String                 MODULVERSION  = "1.2";
+    public final String                 MODULVERSION  = "1.2.3";
     private boolean                     enabled;
 
     public PVPTagger(PVPToolkit toolkit) {
@@ -74,7 +74,8 @@ public class PVPTagger implements Listener {
                     break;
                 }
             if (notallowed) {
-                if (command.toLowerCase().startsWith("fly")
+                if ((command.toLowerCase().startsWith("fly") || command
+                        .toLowerCase().startsWith("c windwalk"))
                         && player.getAllowFlight()) return;
                 player.sendMessage(ChatColor.DARK_RED + "/" + command
                         + " is disabled in combat");

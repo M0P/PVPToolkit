@@ -27,7 +27,7 @@ public class PVPLogger implements Listener {
     List<Player>          offlinePlayers  = new Vector<>();
     List<String>          deadplayers;
 
-    public final String   MODULVERSION    = "1.0";
+    public final String   MODULVERSION    = "1.11";
     private boolean       enabled;
 
     public PVPLogger(PVPToolkit toolkit) {
@@ -57,7 +57,7 @@ public class PVPLogger implements Listener {
                                 if (deadplayer != null) {
                                     Inventory inv = deadplayer.getInventory();
                                     for (ItemStack is : inv) {
-                                        if (is != null)
+                                        if (is != null && is.getTypeId() != 00)
                                             deadplayer
                                                     .getWorld()
                                                     .dropItemNaturally(
@@ -68,7 +68,7 @@ public class PVPLogger implements Listener {
                                     ItemStack[] armor = deadplayer
                                             .getInventory().getArmorContents();
                                     for (ItemStack is : armor) {
-                                        if (is != null)
+                                        if (is != null && is.getTypeId() != 00)
                                             deadplayer
                                                     .getWorld()
                                                     .dropItemNaturally(
