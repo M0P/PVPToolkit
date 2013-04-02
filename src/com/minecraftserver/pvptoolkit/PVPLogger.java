@@ -22,36 +22,38 @@ public class PVPLogger implements Listener {
     PVPTagger             pvpTagger;
     PVPIOManager          datamanager;
     List<String>          markedtoremoval = new Vector<>();
-    HashMap<String, Long> loggedPlayers   = new HashMap<>(); ;
+    HashMap<String, Long> loggedPlayers   = new HashMap<>();
     private final int     runningTask;
     List<Player>          offlinePlayers  = new Vector<>();
     List<String>          deadplayers;
 
-    public final String   MODULVERSION    = "1.11";
+    public final String   MODULVERSION    = "1.12";
     private boolean       enabled;
 
     public PVPLogger(PVPToolkit toolkit) {
-        pvptoolkit = toolkit;
-        enabled = true;
-        pvpTagger = pvptoolkit.getPvptagger();
-        datamanager = new PVPIOManager();
-        PVPIOManager.init(pvptoolkit);
-        deadplayers = datamanager.loadLoggerData();
-        if (deadplayers == null) deadplayers = new Vector<>();
-        runningTask = pvptoolkit.getServer().getScheduler()
-                .scheduleAsyncRepeatingTask(pvptoolkit, new Runnable() {
+        this.pvptoolkit = toolkit;
+        this.enabled = true;
+        this.pvpTagger = this.pvptoolkit.getPvptagger();
+        this.datamanager = new PVPIOManager();
+        PVPIOManager.init(this.pvptoolkit);
+        this.deadplayers = this.datamanager.loadLoggerData();
+        if (this.deadplayers == null) this.deadplayers = new Vector<>();
+        this.runningTask = this.pvptoolkit.getServer().getScheduler()
+                .scheduleSyncRepeatingTask(this.pvptoolkit, new Runnable() {
                     @Override
                     public void run() {
                         long currentmillis = System.currentTimeMillis();
-                        Iterator iterator = loggedPlayers.entrySet().iterator();
+                        Iterator<?> iterator = PVPLogger.this.loggedPlayers
+                                .entrySet().iterator();
                         while (iterator.hasNext()) {
                             Map.Entry pairs = (Map.Entry) iterator.next();
                             String key = (String) pairs.getKey();
                             Long val = (Long) pairs.getValue();
-                            int logduration = pvptoolkit.getPvpLogDuration();
+                            int logduration = PVPLogger.this.pvptoolkit
+                                    .getPvpLogDuration();
                             if (currentmillis >= (val + logduration * 1000)) {
                                 Player deadplayer = null;
-                                for (Player player : offlinePlayers)
+                                for (Player player : PVPLogger.this.offlinePlayers)
                                     if (player.getName().equals(key))
                                         deadplayer = player;
                                 if (deadplayer != null) {
@@ -76,68 +78,72 @@ public class PVPLogger implements Listener {
                                                                     .getLocation(),
                                                             is);
                                     }
-                                    markedtoremoval.add(key);
-                                    offlinePlayers.remove(deadplayer);
+                                    PVPLogger.this.markedtoremoval.add(key);
+                                    PVPLogger.this.offlinePlayers
+                                            .remove(deadplayer);
                                     Bukkit.broadcastMessage(ChatColor.AQUA
                                             + deadplayer.getName()
                                             + ChatColor.RED
                                             + " died because he PvP logged");
-                                    deadplayers.add(deadplayer.getName());
-                                } else pvptoolkit
+                                    PVPLogger.this.deadplayers.add(deadplayer
+                                            .getName());
+                                } else PVPLogger.this.pvptoolkit
                                         .getLogger()
                                         .log(Level.WARNING,
                                                 "PVP Logger: Couldnt find Playerdata of logged player");
                             }
                         }
-                        for (String s : markedtoremoval)
-                            loggedPlayers.remove(s);
-                        markedtoremoval.clear();
-                        pvpTagger.checkTaggedPlayers();
+                        for (String s : PVPLogger.this.markedtoremoval)
+                            PVPLogger.this.loggedPlayers.remove(s);
+                        PVPLogger.this.markedtoremoval.clear();
+                        PVPLogger.this.pvpTagger.checkTaggedPlayers();
                     }
                 }, 60L, 20L);
     }
 
     public void disable() {
-        enabled = false;
-        pvptoolkit.getServer().getScheduler().cancelTask(runningTask);
+        this.enabled = false;
+        this.pvptoolkit.getServer().getScheduler().cancelTask(this.runningTask);
 
     }
 
     @EventHandler
     public void PlayerLogIn(PlayerJoinEvent event) {
-        if (enabled && loggedPlayers.containsKey(event.getPlayer().getName())) {
-            pvpTagger.startTagging(event.getPlayer());
-            markedtoremoval.add(event.getPlayer().getName());
-            for (Player player : offlinePlayers)
+        if (this.enabled
+                && this.loggedPlayers.containsKey(event.getPlayer().getName())) {
+            this.pvpTagger.startTagging(event.getPlayer());
+            this.markedtoremoval.add(event.getPlayer().getName());
+            for (Player player : this.offlinePlayers)
                 if (player.getName().equals(event.getPlayer().getName())) {
-                    offlinePlayers.remove(player);
+                    this.offlinePlayers.remove(player);
                     break;
                 }
         }
-        if (enabled && deadplayers.contains(event.getPlayer().getName())) {
+        if (this.enabled
+                && this.deadplayers.contains(event.getPlayer().getName())) {
             event.getPlayer().getInventory().clear();
             event.getPlayer().getInventory().setArmorContents(null);
             event.getPlayer().setHealth(0);
-            deadplayers.remove(event.getPlayer().getName());
+            this.deadplayers.remove(event.getPlayer().getName());
         }
     }
 
     @EventHandler
     public void PlayerLogOut(PlayerQuitEvent event) {
-        if (enabled
-                && pvpTagger.isTagged(event.getPlayer())
+        if (this.enabled
+                && this.pvpTagger.isTagged(event.getPlayer())
                 && !event.getPlayer().hasPermission(
                         "pvptoolkit.logger.notlogable")
                 && !event.getPlayer().isOp()
                 && !event.getPlayer().hasPermission("pvptoolkit.admin")) {
-            loggedPlayers.put(event.getPlayer().getName(),
+            this.loggedPlayers.put(event.getPlayer().getName(),
                     System.currentTimeMillis());
-            offlinePlayers.add(event.getPlayer());
+            this.offlinePlayers.add(event.getPlayer());
         }
     }
 
     public void saveData() {
-        datamanager.saveLoggerData(deadplayers);
+        this.datamanager.saveLoggerData(this.deadplayers);
     }
 
 }
