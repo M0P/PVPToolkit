@@ -36,7 +36,7 @@ public class PVPLogger implements Listener {
         this.pvpTagger = this.pvptoolkit.getPvptagger();
         this.datamanager = new PVPIOManager();
         PVPIOManager.init(this.pvptoolkit);
-        this.deadplayers = this.datamanager.loadLoggerData();
+        this.deadplayers = PVPIOManager.loadLoggerData();
         if (this.deadplayers == null) this.deadplayers = new Vector<>();
         this.runningTask = this.pvptoolkit.getServer().getScheduler()
                 .scheduleSyncRepeatingTask(this.pvptoolkit, new Runnable() {
@@ -143,7 +143,7 @@ public class PVPLogger implements Listener {
     }
 
     public void saveData() {
-        this.datamanager.saveLoggerData(this.deadplayers);
+        PVPIOManager.saveLoggerData(this.deadplayers);
     }
 
 }

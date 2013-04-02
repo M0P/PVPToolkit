@@ -23,17 +23,15 @@ public class PVPSpawnCampProtection implements Listener {
     private final IEssentials               ess;
     private int                             radius;
 
-    private final HashMap<String, Location> protectedPlayers = new HashMap<String, Location>();
+    private final HashMap<String, Location> protectedPlayers = new HashMap<>();
 
     public final String                     MODULVERSION     = "1.02";
-    private final boolean                   enabled;
 
     public PVPSpawnCampProtection(PVPToolkit toolkit) {
-        pvptoolkit = toolkit;
-        radius = pvptoolkit.getspawnprotectradius();
-        ess = (IEssentials) toolkit.getServer().getPluginManager()
+        this.pvptoolkit = toolkit;
+        this.radius = this.pvptoolkit.getspawnprotectradius();
+        this.ess = (IEssentials) toolkit.getServer().getPluginManager()
                 .getPlugin("Essentials");
-        enabled = true;
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -48,9 +46,9 @@ public class PVPSpawnCampProtection implements Listener {
             if ((dmgr instanceof Player) && (e.getEntity() instanceof Player)) {
                 Player damager = (Player) dmgr;
                 Player receiver = (Player) e.getEntity();
-                if (protectedPlayers.containsKey(damager.getName()))
-                    protectedPlayers.remove(damager.getName());
-                if (protectedPlayers.containsKey((receiver.getName())))
+                if (this.protectedPlayers.containsKey(damager.getName()))
+                    this.protectedPlayers.remove(damager.getName());
+                if (this.protectedPlayers.containsKey((receiver.getName())))
                     event.setCancelled(true);
             }
         }
@@ -59,27 +57,27 @@ public class PVPSpawnCampProtection implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerMove(PlayerMoveEvent event) {
         if (event.isCancelled()) return;
-        if (protectedPlayers.containsKey(event.getPlayer().getName())) {
+        if (this.protectedPlayers.containsKey(event.getPlayer().getName())) {
             try {
                 if ((int) event.getTo().distance(
-                        protectedPlayers.get(event.getPlayer().getName())) > radius) {
-                    protectedPlayers.remove(event.getPlayer().getName());
+                        this.protectedPlayers.get(event.getPlayer().getName())) > this.radius) {
+                    this.protectedPlayers.remove(event.getPlayer().getName());
                 }
             } catch (Exception e) {
-                protectedPlayers.remove(event.getPlayer().getName());
+                this.protectedPlayers.remove(event.getPlayer().getName());
             }
         }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        if (protectedPlayers.containsKey(event.getPlayer().getName()))
-            protectedPlayers.remove(event.getPlayer().getName());
+        if (this.protectedPlayers.containsKey(event.getPlayer().getName()))
+            this.protectedPlayers.remove(event.getPlayer().getName());
         if (event.getPlayer().hasPermission("pvptoolkit.spawnprot")
-                && event.getPlayer().getWorld() == pvptoolkit.getServer()
+                && event.getPlayer().getWorld() == this.pvptoolkit.getServer()
                         .getWorld("world")) {
             Location home = event.getRespawnLocation();
-            final User user = ess.getUser(event.getPlayer());
+            final User user = this.ess.getUser(event.getPlayer());
             final Location bed = user.getBedSpawnLocation();
             if (bed != null && bed.getBlock().getType() == Material.BED_BLOCK) {
                 home = bed;
@@ -91,12 +89,12 @@ public class PVPSpawnCampProtection implements Listener {
                 }
             }
             event.setRespawnLocation(home);
-            protectedPlayers.put(event.getPlayer().getName(), home);
+            this.protectedPlayers.put(event.getPlayer().getName(), home);
         }
     }
 
     public void reloadcfg() {
-        radius = pvptoolkit.getspawnprotectradius();
+        this.radius = this.pvptoolkit.getspawnprotectradius();
     }
 
 }

@@ -28,20 +28,20 @@ public class PVPTagger implements Listener {
     private boolean                     enabled;
 
     public PVPTagger(PVPToolkit toolkit) {
-        pvptoolkit = toolkit;
-        pvpTagDuration = pvptoolkit.getPvpTagDuration();
-        pvpTagBlockedCmds = pvptoolkit.getPvpTagBlockedCmds();
-        enabled = true;
+        this.pvptoolkit = toolkit;
+        this.pvpTagDuration = this.pvptoolkit.getPvpTagDuration();
+        this.pvpTagBlockedCmds = this.pvptoolkit.getPvpTagBlockedCmds();
+        this.enabled = true;
     }
 
     public void checkTaggedPlayers() {
-        HashMap<String, Long> tempMap = (HashMap<String, Long>) taggedPlayers
+        HashMap<String, Long> tempMap = (HashMap<String, Long>) this.taggedPlayers
                 .clone();
         Iterator iterator = tempMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry pairs = (Map.Entry) iterator.next();
             String key = (String) pairs.getKey();
-            Player player = pvptoolkit.getServer().getPlayer(key);
+            Player player = this.pvptoolkit.getServer().getPlayer(key);
             if (stopTagging(key) && player != null)
                 player.sendMessage(ChatColor.GOLD + "You are no longer tagged");
         }
@@ -49,26 +49,26 @@ public class PVPTagger implements Listener {
     }
 
     public void disable() {
-        enabled = false;
+        this.enabled = false;
     }
 
     public boolean isTagged(Player player) {
         stopTagging(player.getName());
-        if (taggedPlayers.containsKey(player.getName())) return true;
+        if (this.taggedPlayers.containsKey(player.getName())) return true;
         return false;
 
     }
 
     @EventHandler()
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        if (event.isCancelled() || !enabled) return;
+        if (event.isCancelled() || !this.enabled) return;
         Player player = event.getPlayer();
         boolean notallowed = false;
         String command = event.getMessage().toLowerCase()
                 .substring(1, event.getMessage().length());
         stopTagging(player.getName());
         if (isTagged(player)) {
-            for (String cmd : pvpTagBlockedCmds)
+            for (String cmd : this.pvpTagBlockedCmds)
                 if (command.toLowerCase().startsWith(cmd)) {
                     notallowed = true;
                     break;
@@ -87,7 +87,7 @@ public class PVPTagger implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerDamage(EntityDamageEvent event) {
-        if (event.isCancelled() || (event.getDamage() == 0) || !enabled) {
+        if (event.isCancelled() || (event.getDamage() == 0) || !this.enabled) {
             return;
         }
         if (event instanceof EntityDamageByEntityEvent) {
@@ -122,21 +122,21 @@ public class PVPTagger implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerDeath(PlayerDeathEvent event) {
         if (isTagged(event.getEntity()))
-            taggedPlayers.remove(event.getEntity().getName());
+            this.taggedPlayers.remove(event.getEntity().getName());
     }
 
     public void reloadcfg() {
-        pvpTagDuration = pvptoolkit.getPvpTagDuration();
-        pvpTagBlockedCmds = pvptoolkit.getPvpTagBlockedCmds();
+        this.pvpTagDuration = this.pvptoolkit.getPvpTagDuration();
+        this.pvpTagBlockedCmds = this.pvptoolkit.getPvpTagBlockedCmds();
 
     }
 
     public void startTagging(final Player player) {
-        taggedPlayers.put(player.getName(), System.currentTimeMillis());
+        this.taggedPlayers.put(player.getName(), System.currentTimeMillis());
     }
 
     private void resetTagging(Player player) {
-        if (taggedPlayers.containsKey(player.getName())) {
+        if (this.taggedPlayers.containsKey(player.getName())) {
             stopTagging(player.getName());
             startTagging(player);
         }
@@ -145,9 +145,9 @@ public class PVPTagger implements Listener {
 
     private boolean stopTagging(String playername) {
         long millis = System.currentTimeMillis();
-        if (taggedPlayers.containsKey(playername)) {
-            if (millis - taggedPlayers.get(playername).longValue() >= (pvpTagDuration * 1000)) {
-                taggedPlayers.remove(playername);
+        if (this.taggedPlayers.containsKey(playername)) {
+            if (millis - this.taggedPlayers.get(playername).longValue() >= (this.pvpTagDuration * 1000)) {
+                this.taggedPlayers.remove(playername);
                 return true;
             }
         }

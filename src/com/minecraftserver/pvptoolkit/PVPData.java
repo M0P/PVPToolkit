@@ -12,11 +12,11 @@ public class PVPData implements Serializable {
     final HashMap<String, Date> joinedPlayers;
     final List<String>          deadPlayers;
 
-    public PVPData(String password, List<String> blockedPlayers) {
-        this.password = password;
-        this.blockedPlayers = blockedPlayers;
-        this.joinedPlayers = null;
+    public PVPData() {
+        this.password = null;
+        this.blockedPlayers = null;
         this.deadPlayers = null;
+        this.joinedPlayers = null;
     }
 
     public PVPData(HashMap<String, Date> joinedPlayers) {
@@ -33,15 +33,11 @@ public class PVPData implements Serializable {
         this.joinedPlayers = null;
     }
 
-    public PVPData() {
-        this.password = null;
-        this.blockedPlayers = null;
-        this.deadPlayers = null;
+    public PVPData(String password, List<String> blockedPlayers) {
+        this.password = password;
+        this.blockedPlayers = blockedPlayers;
         this.joinedPlayers = null;
-    }
-
-    public String getPassword() {
-        return password;
+        this.deadPlayers = null;
     }
 
     public List<String> getBlockedPlayers() {
@@ -50,6 +46,10 @@ public class PVPData implements Serializable {
 
     public List<String> getDeadPlayers() {
         return deadPlayers;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
 }

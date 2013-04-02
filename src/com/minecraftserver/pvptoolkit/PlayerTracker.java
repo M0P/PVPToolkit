@@ -19,20 +19,20 @@ public class PlayerTracker implements Listener {
     private boolean          enabled;
 
     public PlayerTracker(PVPToolkit toolkit) {
-        pvptoolkit = toolkit;
-        this.smalltrackingdistance = pvptoolkit.getsmallTrackingdistance();
-        this.advancedtrackingdistance = pvptoolkit
+        this.pvptoolkit = toolkit;
+        this.smalltrackingdistance = this.pvptoolkit.getsmallTrackingdistance();
+        this.advancedtrackingdistance = this.pvptoolkit
                 .getadvancedTrackingdistance();
-        enabled = true;
+        this.enabled = true;
     }
 
     public void disable() {
-        enabled = false;
+        this.enabled = false;
     }
 
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if (event.isCancelled() || !enabled) return;
+        if (event.isCancelled() || !this.enabled) return;
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK)
                 && event.getMaterial() == Material.COMPASS
                 && event.getPlayer().hasPermission(
@@ -59,10 +59,10 @@ public class PlayerTracker implements Listener {
                     }
                 }
             }
-            int trackingdistance = smalltrackingdistance;
+            int trackingdistance = this.smalltrackingdistance;
             if (event.getPlayer().hasPermission(
                     "pvptoolkit.playertracker.cantrack.advanced"))
-                trackingdistance = advancedtrackingdistance;
+                trackingdistance = this.advancedtrackingdistance;
             if (targetLoc != null && finaldistance < trackingdistance) {
                 event.getPlayer().sendMessage(
                         ChatColor.BLUE + "The next player is " + ChatColor.GOLD
@@ -76,8 +76,8 @@ public class PlayerTracker implements Listener {
     }
 
     public void reloadcfg() {
-        this.smalltrackingdistance = pvptoolkit.getsmallTrackingdistance();
-        this.advancedtrackingdistance = pvptoolkit
+        this.smalltrackingdistance = this.pvptoolkit.getsmallTrackingdistance();
+        this.advancedtrackingdistance = this.pvptoolkit
                 .getadvancedTrackingdistance();
     }
 }
