@@ -2,7 +2,7 @@ name: PVPToolkit
 main: com.minecraftserver.pvptoolkit.PVPToolkit
 website: http://www.minecraftserver.com/
 version: 1.69
-author: M0P
+author: M0P, AquaXV
 commands:
    fly:
       description: Makes you (or the person specified) fly
