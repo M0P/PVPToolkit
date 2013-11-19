@@ -24,7 +24,7 @@ public class PVPTagger implements Listener {
     private final HashMap<String, Long> taggedPlayers = new HashMap<>();
 
     private List<String> pvpTagBlockedCmds;
-    public final String MODULVERSION = "1.2.3";
+    public final String MODULVERSION = "1.2.12";
     private boolean enabled;
 
     public PVPTagger(PVPToolkit toolkit) {
@@ -34,6 +34,7 @@ public class PVPTagger implements Listener {
         this.enabled = true;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void checkTaggedPlayers() {
         HashMap<String, Long> tempMap = (HashMap<String, Long>) this.taggedPlayers.clone();
         for(Map.Entry<String, Long> stringLongEntry : tempMap.entrySet()) {
@@ -51,8 +52,7 @@ public class PVPTagger implements Listener {
 
     public boolean isTagged(Player player) {
         stopTagging(player.getName());
-        return this.taggedPlayers.containsKey(player.getName());
-
+        return taggedPlayers.containsKey(player.getName());
     }
 
     @EventHandler()
@@ -136,9 +136,9 @@ public class PVPTagger implements Listener {
 
     private boolean stopTagging(String playername) {
         long millis = System.currentTimeMillis();
-        if(this.taggedPlayers.containsKey(playername)) {
-            if(millis - this.taggedPlayers.get(playername) >= (this.pvpTagDuration * 1000)) {
-                this.taggedPlayers.remove(playername);
+        if(taggedPlayers.containsKey(playername)) {
+            if(millis - taggedPlayers.get(playername) >= (pvpTagDuration * 1000)) {
+                taggedPlayers.remove(playername);
                 return true;
             }
         }

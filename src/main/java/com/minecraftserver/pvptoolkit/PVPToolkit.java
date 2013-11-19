@@ -38,7 +38,7 @@ public class PVPToolkit extends JavaPlugin {
     private boolean                playerTrackerEnabled;
 
     private boolean                pvpFlyEnabled;
-    private PVPTagger              pvptagger;
+    private static PVPTagger       pvptagger;
     private PVPLogger              pvplogger;
 
     private PVPFly                 pvpfly;
@@ -80,6 +80,12 @@ public class PVPToolkit extends JavaPlugin {
         return this.pvpBlockAttackAllowed;
     }
 
+    
+    
+    public static PVPTagger getPVPTagger() {
+        return pvptagger;
+    }
+    
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,
             String[] args) {
